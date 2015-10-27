@@ -7,6 +7,8 @@ package animalShelterManager;
  * inventory supplies, see employee information, as well as generate expense reports.
  */
 public class ShelterManager {
+	//Variable to store the location of the manager file.
+	static final private String FILE_LOCATION = "./src/managerFile.txt";
 	//Variable to store the first name of the manager
 	private String firstName;
 	//Variable to store the last name of the manager.
@@ -124,6 +126,14 @@ public class ShelterManager {
 			this.password = pass;
 			return true;
 		}
+	}
+	
+	/**
+	 * toFile method to return the location of the manager file to perform I/O operations.
+	 * @return String fileLocation
+	 */
+	public static String toFile(){
+		return FILE_LOCATION;
 	}
 	
 	/**
