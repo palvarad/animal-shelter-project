@@ -47,22 +47,13 @@ public class Manager{
 		return this.lastName;
 	}
 	
-	//READ IT AND FEEL FREE TO DELETE THIS COMMENT SECTION.
-	//Instead of the getPassword method we could change it to a verify password method. The method will only compare the
-	//manager password with what was entered. To catch and display the error just add the following to the implementation class:
-	
-	//catch(IllegalArgumentException e)
-    //{
-        //JOptionPane.showMessageDialog(null, e.getMessage());
-     //}
-	
 	/**
 	 * Special purpose method to validate that the password entered by the user is the correct manager password.
 	 * If the password entered is blank or incorrect then an exception is thrown to inform the user.
 	 * @param String pass
-	 * @return boolean
+	 * @return void
 	 */
-	public boolean validatePassword(String pass){
+	public void validatePassword(String pass){
 		//If the password is blank an exception is thrown to inform the user.
 		if(pass.trim().equals("")){
 			throw new IllegalArgumentException("The password cannot be blank");
@@ -70,10 +61,6 @@ public class Manager{
 		//If the password is incorrect an exception is thrown to inform the user.
 		else if(!pass.equals(this.password)){
 			throw new IllegalArgumentException("The password entered is incorrect");
-		}
-		//If the password is correct then a true is return and the user can proceed.
-		else{
-			return true;
 		}
 	}
 	
@@ -141,7 +128,7 @@ public class Manager{
 	 * @return String managerInfo
 	 */
 	public String toString(){
-		String managerInfo = "Manager: \n" + "First Name: " + this.firstName + "Last Name: " + this.lastName;
+		String managerInfo = "Manager: \n" + "First Name: " + this.firstName + " Last Name: " + this.lastName;
 		
 		return managerInfo;
 	}
