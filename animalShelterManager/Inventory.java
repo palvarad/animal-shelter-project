@@ -12,7 +12,7 @@ public class Inventory {
 	//Variable to store the max number of items allowed at the shelter.
 	private static final int MAX_INVENTORY = 300;
 	//Variable to store the max number of each type of item.
-	private static final int MAX_ITEMS = 50;
+	private static final int MAX_ITEMS = 25;
 	//Variable to keep track of the number of items available in the animal shelter.
 	private static int inventoryCount = 0;
 	//Variable to store the name of the item
@@ -30,7 +30,6 @@ public class Inventory {
 		this.inventoryCost = 0;
 		this.inventorySell = 0;
 		this.itemCount = 0;
-		inventoryCount++;
 	}
 	
 	//Specific constructor to create an Animal object with user defined attributes.
@@ -159,6 +158,21 @@ public class Inventory {
 		//If the count is 0 or positive then the count is set.
 		else{
 			this.itemCount = count;
+		}
+	}
+	
+	/**
+	 * Mutator method to add the inventory count of a new item to the overall inventory count.
+	 * @param invCount
+	 */
+	public static void setItemInventory(int invCount){
+		//If the count is less than 0 then an exception is thrown to inform the user.
+		if(invCount < 0){
+			throw new NumberFormatException("The number of items available must be positive or 0.");
+		}
+		//If the count is 0 or positive then the count is set.
+		else{
+			inventoryCount += invCount;
 		}
 	}
 	
