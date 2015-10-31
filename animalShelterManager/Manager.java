@@ -6,7 +6,7 @@ package animalShelterManager;
  * The manager will have administrative access to everything within the software and the ability to purchase
  * inventory supplies, see employee information, as well as generate expense reports.
  */
-public class ShelterManager {
+public class Manager{
 	//Variable to store the location of the manager file.
 	static final private String FILE_LOCATION = "./src/managerFile.txt";
 	//Variable to store the first name of the manager
@@ -17,14 +17,14 @@ public class ShelterManager {
 	private String password;
 	
 	//Default constructor to create a ShelterManager object with default attributes.
-	public ShelterManager(){
+	public Manager(){
 		this.firstName = "";
 		this.lastName = "";
 		this.password = "";
 	}
 	
 	//Specific constructor to create a ShelterManager object with user defined attributes.
-	public ShelterManager(String fName, String lName, String pass){
+	public Manager(String fName, String lName, String pass){
 		this();
 		this.firstName = fName;
 		this.lastName = lName;
