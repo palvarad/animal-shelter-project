@@ -33,7 +33,7 @@ public class Animal {
 	public Animal(String type){
 		this();
 		this.animalType = type;
-		this.animalID = createID(this.animalType); 
+		this.animalID = setAnimalID(this.animalType); 
 	}
 
 	/**
@@ -73,6 +73,7 @@ public class Animal {
 		//If the name is not blank then the name is stored and a true is return.
 		else{
 			this.animalType = type;
+			this.animalID = setAnimalID(this.animalType); 
 		}
 	}
 	
@@ -141,7 +142,7 @@ public class Animal {
 	 * @param typeToCreate
 	 * @return String newID
 	 */
-	private static String createID(String typeToCreate){
+	private static String setAnimalID(String typeToCreate){
 		String newID = "";
 		
 		switch(typeToCreate){
