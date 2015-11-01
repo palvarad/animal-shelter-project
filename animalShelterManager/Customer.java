@@ -5,7 +5,7 @@ package animalShelterManager;
  * include the first name, last name, phone number, and the animals they have adopted at the animal shelter.
  * The customer will be purchasing goods and adopting animals from the shelter. 
  */
-public class Customer {
+public class Customer extends ShelterPerson{
 	//Variable to store the location of the manager file.
 	static final private String FILE_LOCATION = "./src/customerFile.txt";
 	//Variable to store the max number of animals a customer can adopt.
@@ -16,10 +16,6 @@ public class Customer {
 	static final int PHONE_LEFT_DASH = 3, PHONE_RIGHT_DASH = 7;
 	//Array of the animals the customer has adopted.
 	private String[] animalsAdopted;
-	//Variable to store the first name of the customer.
-	private String firstName;
-	//Variable to store the last name of the customer.
-	private String lastName;
 	//Variable to store the phone number of the customer.
 	private String phoneNumber;
 	//Variable to keep track of the number of animals a customer has adopted.
@@ -27,35 +23,16 @@ public class Customer {
 	
 	//Default constructor to create a Customer object with default attributes.
 	public Customer(){
-		this.firstName = "";
-		this.lastName = "";
-		this.phoneNumber = "";
-		this.adoptionCount = 0;
-		this.animalsAdopted = new String[MAX_ADOPTIONS];
+		this("","","");
+		
 	}
 	
 	//Specific constructor to create a Customer object with user defined attributes.
 	public Customer(String fName, String lName, String phone){
-		this();
-		this.firstName = fName;
-		this.lastName = lName;
+		super(fName, lName);
 		this.phoneNumber = phone;
-	}
-	
-	/**
-	 * Accessor method to return the first name of the customer.
-	 * @return String firstName
-	 */
-	public String getFirstName(){
-		return this.firstName;
-	}
-	
-	/**
-	 * Accessor method to return the last name of the customer.
-	 * @return
-	 */
-	public String getLastName(){
-		return this.lastName;
+		this.adoptionCount = 0;
+		this.animalsAdopted = new String[MAX_ADOPTIONS];
 	}
 	
 	/**
@@ -101,36 +78,8 @@ public class Customer {
 		return MAX_ADOPTIONS;
 	}
 	
-	/**
-	 * Mutator method to set the first name of the customer. If the name is blank an exception is thrown.
-	 * @param String fName
-	 * @return void
-	 */
-	public void setFirstName(String fName){
-		//If the name is blank then an exception is thrown to inform the user.
-		if(fName.trim().equals("")){
-			throw new IllegalArgumentException("The first name cannot be blank");
-		}
-		//If the name is not blank then the name is stored and a true is return.
-		else{
-			this.firstName = fName;
-		}
-	}
-	
-	/**
-	 * Mutator method to set the last name of the customer. If the name is blank an exception is thrown.
-	 * @param String fName
-	 * @return void
-	 */
-	public void setLastName(String lName){
-		//If the name is blank then an exception is thrown to inform the user.
-		if(lName.trim().equals("")){
-			throw new IllegalArgumentException("The last name cannot be blank");
-		}
-		//If the name is not blank then the name is stored and a true is return.
-		else{
-			this.lastName = lName;
-		}
+	public void setAdoptionCount(int count){
+		this.adoptionCount = count;
 	}
 	
 	/**
@@ -190,7 +139,7 @@ public class Customer {
 	 * @return String managerInfo
 	 */
 	public String toString(){
-		String customerInfo = "First Name: " + this.firstName + "Last Name: " + this.lastName + " Phone Number: " + this.phoneNumber +
+		String customerInfo = super.toString() + " Phone Number: " + this.phoneNumber +
 						" Animals Adopted: " + this.getAnimalsAdopted();
 		
 		return customerInfo;

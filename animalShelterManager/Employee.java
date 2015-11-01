@@ -5,7 +5,7 @@ package animalShelterManager;
  * include the first name, last name, employee ID, and phone number of the employee at the animal shelter.
  * The employee will be assisting customer that want to adopt an animal from the shelter. 
  */
-public class Employee {
+public class Employee extends ShelterPerson{
 	//Variable to store the location of the manager file.
 	static final private String FILE_LOCATION = "./src/employeeFile.txt";
 	//Variable to store the max number of employees that can work at the animal shelter.
@@ -16,43 +16,18 @@ public class Employee {
 	static final private int MAX_HOURS = 40;
 	//Variable to store the number of employees working at the animal shelter.
 	static private int employeeCount;
-	//Variable to store the first name of the employee.
-	private String firstName;
-	//Variable to store the last name of the employee.
-	private String lastName;
 	//Variable to store the ID of the employee.
 	private String employeeID;
 	
 	//Default constructor to create an Employee object with default attributes.
 	public Employee(){
-		this.firstName = "";
-		this.lastName = "";
-		this.employeeID = "";
-		employeeCount++;
+		this("", "", "");
 	}
 	
 	//Specific constructor to create an Employee object with user defined attributes.
-	public Employee(String id, String lName, String fName){
-		this();
+	public Employee(String id, String fName, String lName){
+		super(fName, lName);
 		this.employeeID = id;
-		this.firstName = fName;
-		this.lastName = lName;
-	}
-	
-	/**
-	 * Accessor method to return the first name of the employee.
-	 * @return String firstName
-	 */
-	public String getFirstName(){
-		return this.firstName;
-	}
-	
-	/**
-	 * Accessor method to return the last name of the employee.
-	 * @return
-	 */
-	public String getLastName(){
-		return this.lastName;
 	}
 	
 	/**
@@ -90,36 +65,8 @@ public class Employee {
 		return payToEmployee;
 	}
 	
-	/**
-	 * Mutator method to set the first name of the employee. If the name is blank an exception is thrown.
-	 * @param String fName
-	 * @return void
-	 */
-	public void setFirstName(String fName){
-		//If the name is blank then an exception is thrown to inform the user.
-		if(fName.trim().equals("")){
-			throw new IllegalArgumentException("The first name cannot be blank");
-		}
-		//If the name is not blank then the name is stored and a true is return.
-		else{
-			this.firstName = fName;
-		}
-	}
-	
-	/**
-	 * Mutator method to set the last name of the employee. If the name is blank an exception is thrown.
-	 * @param String lName
-	 * @return void
-	 */
-	public void setLastName(String lName){
-		//If the name is blank then an exception is thrown to inform the user.
-		if(lName.trim().equals("")){
-			throw new IllegalArgumentException("The last name cannot be blank");
-		}
-		//If the name is not blank then the name is stored and a true is return.
-		else{
-			this.lastName = lName;
-		}
+	public static void setEmployeeCount(int count){
+		employeeCount = count;
 	}
 	
 	/**
@@ -160,7 +107,7 @@ public class Employee {
 	 * @return String managerInfo
 	 */
 	public String toString(){
-		String employeeInfo = "ID:" + this.employeeID + "First Name: " + this.firstName + "Last Name: " + this.lastName;
+		String employeeInfo = "ID: " + this.employeeID + super.toString();
 		
 		return employeeInfo;
 	}

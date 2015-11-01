@@ -6,45 +6,26 @@ package animalShelterManager;
  * The manager will have administrative access to everything within the software and the ability to purchase
  * inventory supplies, see employee information, as well as generate expense reports.
  */
-public class Manager{
+public class Manager extends ShelterPerson{
 	//Variable to store the location of the manager file.
 	static final private String FILE_LOCATION = "./src/managerFile.txt";
-	//Variable to store the first name of the manager
-	private String firstName;
-	//Variable to store the last name of the manager.
-	private String lastName;
+	static final private int MAX_MANAGERS = 1;
 	//Variable to store the password of the manager.
 	private String password;
 	
 	//Default constructor to create a ShelterManager object with default attributes.
 	public Manager(){
-		this.firstName = "";
-		this.lastName = "";
-		this.password = "";
+		this("", "", "");
 	}
 	
 	//Specific constructor to create a ShelterManager object with user defined attributes.
 	public Manager(String fName, String lName, String pass){
-		this();
-		this.firstName = fName;
-		this.lastName = lName;
+		super(fName, lName);
 		this.password = pass;
 	}
 	
-	/**
-	 * Accessor method to return the first name of the manager.
-	 * @return String firstName
-	 */
-	public String getFirstName(){
-		return this.firstName;
-	}
-	
-	/**
-	 * Accessor method to return the last name of the manager.
-	 * @return
-	 */
-	public String getLastName(){
-		return this.lastName;
+	public static int getMaxManagers(){
+		return MAX_MANAGERS;
 	}
 	
 	/**
@@ -64,39 +45,6 @@ public class Manager{
 		}
 	}
 	
-	/**
-	 * Mutator method to set the first name of the manager. If the name is blank an exception is thrown.
-	 * @param String fName
-	 * @return boolean
-	 */
-	public boolean setFirstName(String fName){
-		//If the name is blank then an exception is thrown to inform the user.
-		if(fName.trim().equals("")){
-			throw new IllegalArgumentException("The first name cannot be blank");
-		}
-		//If the name is not blank then the name is stored and a true is return.
-		else{
-			this.firstName = fName;
-			return true;
-		}
-	}
-	
-	/**
-	 * Mutator method to set the last name of the manager. If the name is blank an exception is thrown.
-	 * @param lName
-	 * @return boolean
-	 */
-	public boolean setLastName(String lName){
-		//If the name is blank then an exception is thrown to inform the user.
-		if(lName.trim().equals("")){
-			throw new IllegalArgumentException("The last name cannot be blank");
-		}
-		//If the name is not blank then the name is stored and a true is return.
-		else{
-			this.lastName = lName;
-			return true;
-		}
-	}
 	
 	/**
 	 * Mutator method to set the password of the manager. If the password is blank an exception is thrown.
@@ -128,7 +76,7 @@ public class Manager{
 	 * @return String managerInfo
 	 */
 	public String toString(){
-		String managerInfo = "Manager: \n" + "First Name: " + this.firstName + " Last Name: " + this.lastName;
+		String managerInfo = "Manager: \n" + super.toString();
 		
 		return managerInfo;
 	}
