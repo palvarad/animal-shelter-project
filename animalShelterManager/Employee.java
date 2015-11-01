@@ -93,9 +93,9 @@ public class Employee {
 	/**
 	 * Mutator method to set the first name of the employee. If the name is blank an exception is thrown.
 	 * @param String fName
-	 * @return boolean
+	 * @return void
 	 */
-	public boolean setFirstName(String fName){
+	public void setFirstName(String fName){
 		//If the name is blank then an exception is thrown to inform the user.
 		if(fName.trim().equals("")){
 			throw new IllegalArgumentException("The first name cannot be blank");
@@ -103,16 +103,15 @@ public class Employee {
 		//If the name is not blank then the name is stored and a true is return.
 		else{
 			this.firstName = fName;
-			return true;
 		}
 	}
 	
 	/**
 	 * Mutator method to set the last name of the employee. If the name is blank an exception is thrown.
 	 * @param String lName
-	 * @return boolean
+	 * @return void
 	 */
-	public boolean setLastName(String lName){
+	public void setLastName(String lName){
 		//If the name is blank then an exception is thrown to inform the user.
 		if(lName.trim().equals("")){
 			throw new IllegalArgumentException("The last name cannot be blank");
@@ -120,7 +119,6 @@ public class Employee {
 		//If the name is not blank then the name is stored and a true is return.
 		else{
 			this.lastName = lName;
-			return true;
 		}
 	}
 	
@@ -129,7 +127,7 @@ public class Employee {
 	 * @param String id
 	 * @return boolean
 	 */
-	public boolean setEmployeeId(String id){
+	public void setEmployeeId(String id){
 		//If the name is blank then an exception is thrown to inform the user.
 		if(id.trim().equals("")){
 			throw new IllegalArgumentException("The last name cannot be blank");
@@ -137,7 +135,6 @@ public class Employee {
 		//If the name is not blank then the name is stored and a true is return.
 		else{
 			this.employeeID = id;
-			return true;
 		}
 	}
 	
