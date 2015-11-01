@@ -32,11 +32,11 @@ public class Employee {
 	}
 	
 	//Specific constructor to create an Employee object with user defined attributes.
-	public Employee(String fName, String lName, String id){
+	public Employee(String id, String lName, String fName){
 		this();
+		this.employeeID = id;
 		this.firstName = fName;
 		this.lastName = lName;
-		this.employeeID = id;
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class Employee {
 	/**
 	 * Mutator method to set the ID of the employee. If the id is blank an exception is thrown.
 	 * @param String id
-	 * @return boolean
+	 * @return void
 	 */
 	public void setEmployeeId(String id){
 		//If the name is blank then an exception is thrown to inform the user.
