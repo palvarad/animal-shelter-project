@@ -61,6 +61,22 @@ public class Animal {
 	}
 	
 	/**
+	 * Mutator method to set the animal type. If the type is empty then an exception is thrown.
+	 * @param type
+	 * @return void
+	 */
+	public void setAnimalType(String type){
+		//If the name is blank then an exception is thrown to inform the user.
+		if(type.trim().equals("")){
+			throw new IllegalArgumentException("The animal type cannot be blank");
+		}
+		//If the name is not blank then the name is stored and a true is return.
+		else{
+			this.animalType = type;
+		}
+	}
+	
+	/**
 	 * Special purpose method to make changes to the Animal class when an animal is adopted.
 	 * @param type
 	 * @return String animalID
