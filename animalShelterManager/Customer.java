@@ -104,9 +104,9 @@ public class Customer {
 	/**
 	 * Mutator method to set the first name of the customer. If the name is blank an exception is thrown.
 	 * @param String fName
-	 * @return boolean
+	 * @return void
 	 */
-	public boolean setFirstName(String fName){
+	public void setFirstName(String fName){
 		//If the name is blank then an exception is thrown to inform the user.
 		if(fName.trim().equals("")){
 			throw new IllegalArgumentException("The first name cannot be blank");
@@ -114,16 +114,15 @@ public class Customer {
 		//If the name is not blank then the name is stored and a true is return.
 		else{
 			this.firstName = fName;
-			return true;
 		}
 	}
 	
 	/**
 	 * Mutator method to set the last name of the customer. If the name is blank an exception is thrown.
 	 * @param String fName
-	 * @return boolean
+	 * @return void
 	 */
-	public boolean setLastName(String lName){
+	public void setLastName(String lName){
 		//If the name is blank then an exception is thrown to inform the user.
 		if(lName.trim().equals("")){
 			throw new IllegalArgumentException("The last name cannot be blank");
@@ -131,7 +130,6 @@ public class Customer {
 		//If the name is not blank then the name is stored and a true is return.
 		else{
 			this.lastName = lName;
-			return true;
 		}
 	}
 	
