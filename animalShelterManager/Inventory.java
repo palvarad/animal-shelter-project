@@ -18,7 +18,7 @@ public class Inventory {
 	//Variable to store the name of the item
 	private String inventoryName;
 	//Variable to store the purchase price of the item
-	private double inventoryCost;
+	private double inventoryPurchase;
 	//Variable to store the sell price of the item
 	private double inventorySell;
 	//Variable to store the amount of items available for a specific type of item
@@ -27,7 +27,7 @@ public class Inventory {
 	//Default constructor to create an Inventory object with default attributes.
 	public Inventory(){
 		this.inventoryName = "";
-		this.inventoryCost = 0;
+		this.inventoryPurchase = 0;
 		this.inventorySell = 0;
 		this.itemCount = 0;
 	}
@@ -36,7 +36,7 @@ public class Inventory {
 	public Inventory(String name, double purchase, double sell, int count){
 		this();
 		this.inventoryName = name;
-		this.inventoryCost = purchase;
+		this.inventoryPurchase = purchase;
 		this.inventorySell = sell;
 		this.itemCount = count;
 	}
@@ -54,7 +54,7 @@ public class Inventory {
 	 * @return
 	 */
 	public double getItemPurchaseCost(){
-		return this.inventoryCost;
+		return this.inventoryPurchase;
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class Inventory {
 		}
 		//If the cost is positive then the cost is set.
 		else{
-			this.inventoryCost = pCost;
+			this.inventoryPurchase = pCost;
 		}
 	}
 	
@@ -193,7 +193,7 @@ public class Inventory {
 					+ "Item Count:" + this.itemCount + " Max Inventory: " + Inventory.getMaxItemCount());
 		}
 		else{
-			purchaseTotal = this.inventoryCost * amountToPurchase;
+			purchaseTotal = this.inventoryPurchase * amountToPurchase;
 			this.setItemCount(this.itemCount + amountToPurchase);
 			inventoryCount += amountToPurchase;
 			return purchaseTotal;
@@ -240,7 +240,7 @@ public class Inventory {
 	 * @return String inventoryInfo
 	 */
 	public String toString(){
-		String inventoryInfo = "Item Name:" + this.inventoryName + "Purchase Price: " + this.inventoryCost + "Sell Price: " + this.inventorySell
+		String inventoryInfo = "Item Name:" + this.inventoryName + "Purchase Price: " + this.inventoryPurchase + "Sell Price: " + this.inventorySell
 						+ "Items Available: " + this.itemCount;
 		
 		return inventoryInfo;
