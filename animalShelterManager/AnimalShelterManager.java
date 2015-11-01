@@ -14,19 +14,24 @@ public class AnimalShelterManager {
 		final String[] LOGIN_OPTIONS = {"Manager", "Employee"};
 		final String LOGIN_PROMPT = "Select User Type:";
 		
+		//Arrays to store the different person objects.
 		ShelterPerson shelterManager[] = new Manager[Manager.getMaxManagers()];
+		//Loop to initialize all objects inside the array to avoid errors.
 		for(int x = 0; x < Manager.getMaxManagers(); x++){
 			shelterManager[x] = new Manager();
 		}
 		
 		ShelterPerson shelterEmployees[] = new Employee[Employee.getMaxEmployees()];
+		//Loop to initialize all objects inside the array to avoid errors.
 		for(int x = 0; x < Employee.getMaxEmployees(); x++){
 			shelterEmployees[x] = new Employee();
 		}
 		
+		//Method call that reads the file. The array and file path are passed.
 		readPersonFile(shelterManager, Manager.toFile());
 		readPersonFile(shelterEmployees, Employee.toFile());
 		
+		//For loop to print the contents of the arrays. For testing and can be deleted in the future.
 		for(int x = 0; x < Manager.getMaxManagers(); x++){
 			System.out.println(shelterManager[x].toString() + "\n");
 		}
@@ -54,18 +59,17 @@ public class AnimalShelterManager {
 	private static void readPersonFile(ShelterPerson[] persons, String filePath){
 		//String for the title of all the messages for this method
 		final String TITLE = "Animal Shelter Manager";
+		//Variable to keep track of which line is added to which object in the array.
 		int personCount = 0;
 		//Variable to store the last position of the semicolon used for dividing attributes.
 		int lastInfoDiv;
 		//Variable to store the position where to start to search for the next element.
 		int divPosition;
-		//Scanner object to read the file set to null.
-		Scanner reader = null;
 		
 		//Try and catch to prevent the program from crashing if the file is missing or other I/O errors.
 		try{
 			//Scanner object to read the file information
-			reader = new Scanner(new FileInputStream(filePath));
+			Scanner reader = new Scanner(new FileInputStream(filePath));
 			
 			//While loop to iterate until there are no more lines to read from the file.
 			while(reader.hasNextLine()){
@@ -86,7 +90,6 @@ public class AnimalShelterManager {
 				
 				if(persons[personCount] instanceof Manager){
 					Manager currentManager = (Manager)persons[personCount];
-					//Anything after the last semicolon is the password. The white space is trim.
 					divPosition = line.indexOf(';', lastInfoDiv);
 					currentManager.setPassword(line.substring(divPosition + 1).trim());
 				}
