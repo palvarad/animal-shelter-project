@@ -27,9 +27,15 @@ public class AnimalShelterManager {
 			shelterEmployees[x] = new Employee();
 		}
 		
+		ShelterPerson shelterCustomers[] = new Customer[10];
+		for(int x = 0; x < 10; x++){
+			shelterCustomers[x] = new Customer();
+		}
+		
 		//Method call that reads the file. The array and file path are passed.
 		readPersonFile(shelterManager, Manager.toFile());
 		readPersonFile(shelterEmployees, Employee.toFile());
+		readPersonFile(shelterCustomers, Customer.toFile());
 		
 		//For loop to print the contents of the arrays. For testing and can be deleted in the future.
 		for(int x = 0; x < Manager.getMaxManagers(); x++){
@@ -39,6 +45,8 @@ public class AnimalShelterManager {
 		for(int x = 0; x < Employee.getEmployeeCount(); x++){
 			System.out.println(shelterEmployees[x].toString() + "\n");
 		}
+		
+		System.out.println(shelterCustomers[0].toString());
 		
 		int choice = JOptionPane.showOptionDialog(null, LOGIN_PROMPT, TITLE, 0, JOptionPane.QUESTION_MESSAGE, null, LOGIN_OPTIONS, null);
 		if(choice == 0){
@@ -98,6 +106,12 @@ public class AnimalShelterManager {
 					divPosition = line.indexOf(';', lastInfoDiv);
 					currentEmployee.setEmployeeId(line.substring(divPosition + 1).trim());
 					Employee.setEmployeeCount(personCount + 1);
+				}
+				else if(persons[personCount] instanceof Customer){
+					Customer currentCustomer = (Customer)persons[personCount];
+					divPosition = line.indexOf(';', lastInfoDiv);
+					currentCustomer.setPhoneNumber(line.substring(divPosition + 1).trim());
+					//TODO Add a way to read the animals adopted from the file.
 				}
 				
 				personCount++;
