@@ -69,7 +69,7 @@ public class Inventory {
 	 * Accessor method to return the sell cost of the item.
 	 * @return
 	 */
-	public double getItemCount(){
+	public int getItemCount(){
 		return this.itemCount;
 	}
 	
@@ -118,7 +118,7 @@ public class Inventory {
 	 * @param double pCost
 	 * @return void
 	 */
-	public void setItemPurchaseCost(double pCost){
+	public void setItemPurchasePrice(double pCost){
 		//If the cost is 0 or less then an exception is thrown to inform the user.
 		if(pCost <= 0){
 			throw new NumberFormatException("The cost of the item must be positive.");
@@ -134,7 +134,7 @@ public class Inventory {
 	 * @param double pCost
 	 * @return void
 	 */
-	public void setItemSellCost(double sCost){
+	public void setItemSellPrice(double sCost){
 		//If the cost is 0 or less then an exception is thrown to inform the user.
 		if(sCost <= 0){
 			throw new NumberFormatException("The sell price of the item must be positive.");
@@ -165,7 +165,7 @@ public class Inventory {
 	 * Mutator method to add the inventory count of a new item to the overall inventory count.
 	 * @param invCount
 	 */
-	public static void setItemInventory(int invCount){
+	public static void setInventoryCount(int invCount){
 		//If the count is less than 0 then an exception is thrown to inform the user.
 		if(invCount < 0){
 			throw new NumberFormatException("The number of items available must be positive or 0.");
@@ -240,8 +240,8 @@ public class Inventory {
 	 * @return String inventoryInfo
 	 */
 	public String toString(){
-		String inventoryInfo = "Item Name:" + this.inventoryName + "Purchase Price: " + this.inventoryPurchase + "Sell Price: " + this.inventorySell
-						+ "Items Available: " + this.itemCount;
+		String inventoryInfo = "Item Name:" + this.inventoryName + " Purchase Price: " + this.inventoryPurchase + " Sell Price: "
+					+ this.inventorySell + " Items Available: " + this.itemCount;
 		
 		return inventoryInfo;
 	}
