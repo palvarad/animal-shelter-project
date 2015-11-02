@@ -32,10 +32,16 @@ public class AnimalShelterManager {
 			shelterCustomers[x] = new Customer();
 		}
 		
+		Inventory shelterInventory[] = new Inventory[12];
+		for(int x = 0; x < 12; x++){
+			shelterInventory[x] = new Inventory();
+		}
+		
 		//Method call that reads the file. The array and file path are passed.
 		readPersonFile(shelterManager, Manager.toFile());
 		readPersonFile(shelterEmployees, Employee.toFile());
 		readPersonFile(shelterCustomers, Customer.toFile());
+		readInventoryFile(shelterInventory);
 		
 		//For loop to print the contents of the arrays. For testing and can be deleted in the future.
 		for(int x = 0; x < Manager.getMaxManagers(); x++){
@@ -47,6 +53,12 @@ public class AnimalShelterManager {
 		}
 		
 		System.out.println(shelterCustomers[0].toString());
+		
+		for(int x = 0; x < 12; x++){
+			System.out.println(shelterInventory[x].toString() + "\n");
+		}
+		
+		System.out.println(Inventory.getInventoryCount());
 		
 		int choice = JOptionPane.showOptionDialog(null, LOGIN_PROMPT, TITLE, 0, JOptionPane.QUESTION_MESSAGE, null, LOGIN_OPTIONS, null);
 		if(choice == 0){
@@ -68,7 +80,7 @@ public class AnimalShelterManager {
 		//String for the title of all the messages for this method
 		final String TITLE = "Animal Shelter Manager";
 		//Variable to keep track of which line is added to which object in the array.
-		int personCount = 0;
+		int personIndex = 0;
 		//Variable to store the last position of the semicolon used for dividing attributes.
 		int lastInfoDiv;
 		//Variable to store the position where to start to search for the next element.
@@ -88,33 +100,32 @@ public class AnimalShelterManager {
 				
 				//Finds the first semicolon and cuts the unnecessary parts to only have the first name.
 				divPosition = line.indexOf(';') + lastInfoDiv;
-				persons[personCount].setFirstName(line.substring(lastInfoDiv, divPosition));
+				persons[personIndex].setFirstName(line.substring(lastInfoDiv, divPosition));
 				lastInfoDiv = line.indexOf(';') + 1;
 
 				//Finds the next semicolon and cuts the unnecessary parts to only have the last name.
 				divPosition = line.indexOf(';', lastInfoDiv);
-				persons[personCount].setLastName(line.substring(lastInfoDiv, divPosition));
+				persons[personIndex].setLastName(line.substring(lastInfoDiv, divPosition));
 				lastInfoDiv = line.indexOf(';', divPosition);
 				
-				if(persons[personCount] instanceof Manager){
-					Manager currentManager = (Manager)persons[personCount];
+				if(persons[personIndex] instanceof Manager){
+					Manager currentManager = (Manager)persons[personIndex];
 					divPosition = line.indexOf(';', lastInfoDiv);
 					currentManager.setPassword(line.substring(divPosition + 1).trim());
 				}
-				else if(persons[personCount] instanceof Employee){
-					Employee currentEmployee = (Employee)persons[personCount];
+				else if(persons[personIndex] instanceof Employee){
+					Employee currentEmployee = (Employee)persons[personIndex];
 					divPosition = line.indexOf(';', lastInfoDiv);
 					currentEmployee.setEmployeeId(line.substring(divPosition + 1).trim());
-					Employee.setEmployeeCount(personCount + 1);
+					Employee.setEmployeeCount(personIndex + 1);
 				}
-				else if(persons[personCount] instanceof Customer){
-					Customer currentCustomer = (Customer)persons[personCount];
+				else if(persons[personIndex] instanceof Customer){
+					Customer currentCustomer = (Customer)persons[personIndex];
 					divPosition = line.indexOf(';', lastInfoDiv);
 					currentCustomer.setPhoneNumber(line.substring(divPosition + 1).trim());
 					//TODO Add a way to read the animals adopted from the file.
 				}
-				
-				personCount++;
+				personIndex++;
 			}
 			//After reading the file close the Scanner object.
 			reader.close();
@@ -122,5 +133,53 @@ public class AnimalShelterManager {
 		}catch(FileNotFoundException e){
 			JOptionPane.showMessageDialog(null, "File was not found.", TITLE, JOptionPane.ERROR_MESSAGE);
 		}
+	}
+	
+	private static void readInventoryFile(Inventory[] items){
+		//String for the title of all the messages for this method
+		final String TITLE = "Animal Shelter Manager";
+		//Variable to store the last position of the semicolon used for dividing attributes.
+		int lastInfoDiv;
+		//Variable to store the position where to start to search for the next element.
+		int divPosition;
+		int itemIndex = 0;
+		
+		//Try and catch to prevent the program from crashing if the file is missing or other I/O errors.
+		try{
+			//Scanner object to read the file information
+			Scanner reader = new Scanner(new FileInputStream(Inventory.toFile()));
+					
+			//While loop to iterate until there are no more lines to read from the file.
+			while(reader.hasNextLine()){
+				lastInfoDiv = 0;
+				divPosition = 0;
+				//String to hold a line from the file.
+				String line = reader.nextLine();
+						
+				//Finds the first semicolon and cuts the unnecessary parts to only have the first name.
+				divPosition = line.indexOf(';') + lastInfoDiv;
+				items[itemIndex].setItemName(line.substring(lastInfoDiv, divPosition));
+				lastInfoDiv = line.indexOf(';') + 1;
+
+				//Finds the next semicolon and cuts the unnecessary parts to only have the last name.
+				divPosition = line.indexOf(';', lastInfoDiv);
+				items[itemIndex].setItemPurchasePrice(((Double.parseDouble(line.substring(lastInfoDiv, divPosition).trim()))));
+				lastInfoDiv = line.indexOf(';', divPosition) + 1;
+				
+				divPosition = line.indexOf(';', lastInfoDiv);
+				items[itemIndex].setItemSellPrice(((Double.parseDouble(line.substring(lastInfoDiv, divPosition).trim()))));
+				lastInfoDiv = line.indexOf(';', divPosition);
+				
+				divPosition = line.indexOf(';', lastInfoDiv);
+				items[itemIndex].setItemCount(((Integer.parseInt(line.substring(divPosition + 1).trim()))));
+				Inventory.setInventoryCount(items[itemIndex].getItemCount());
+				itemIndex++;
+			}
+			//After reading the file close the Scanner object.
+			reader.close();
+			//File not found exception to display an error message to the user.
+			}catch(FileNotFoundException e){
+				JOptionPane.showMessageDialog(null, "File was not found.", TITLE, JOptionPane.ERROR_MESSAGE);
+			}
 	}
 }
