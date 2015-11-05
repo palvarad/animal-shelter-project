@@ -26,14 +26,14 @@ public class Animal {
 	//Default constructor to create an Animal object with default attributes.
 	public Animal(){
 		this.animalType = "";
-		animalCount++;
+		this.animalID = "";
 	}
 	
 	//Specific constructor to create an Animal object with user defined attributes.
 	public Animal(String type){
 		this();
 		this.animalType = type;
-		this.animalID = setAnimalID(this.animalType); 
+		this.animalID = createAnimalID(this.animalType); 
 	}
 
 	/**
@@ -73,7 +73,9 @@ public class Animal {
 		//If the name is not blank then the name is stored and a true is return.
 		else{
 			this.animalType = type;
-			this.animalID = setAnimalID(this.animalType); 
+			if(this.animalID.equals("")){
+				this.animalID = createAnimalID(this.animalType);
+			}
 		}
 	}
 	
@@ -136,14 +138,46 @@ public class Animal {
 		return typeCount;
 	}
 	
+	public static int setTypeCount(String type){
+		int typeCount = 0;
+		
+		switch(type){
+			case "Dog":
+				dogCount++;
+				break;
+			case "Cat":
+				catCount++;
+				break;
+			case "Rodent":
+				rodentCount++;
+				break;
+			case "Bird":
+				birdCount++;
+				break;
+		}
+		return typeCount;
+	}
+	
+	public void setAnimalID(String id){
+		//If the name is blank then an exception is thrown to inform the user.
+		if(id.trim().equals("")){
+			throw new IllegalArgumentException("The animal id cannot be blank");
+		}
+		//If the name is not blank then the name is stored and a true is return.
+		else{
+			this.animalID = id;
+		}
+	}
+	
 	/**
 	 * Special purpose method to create the ID for each animal. Based on the type the first letter of the ID changes.
 	 * The rest of the ID is calculated by adding INIT_ID and the animal count.
 	 * @param typeToCreate
 	 * @return String newID
 	 */
-	private static String setAnimalID(String typeToCreate){
+	private static String createAnimalID(String typeToCreate){
 		String newID = "";
+		animalCount++;
 		
 		switch(typeToCreate){
 			case "Dog":
@@ -167,11 +201,29 @@ public class Animal {
 	}
 	
 	/**
-	 * toFile method to return the location of the animal file to perform I/O operations.
+	 * Mutator method to set the number of animals currently in the shelter.
+	 * @param int count
+	 */
+	public static void setAnimalCount(int count){
+		animalCount = count;
+	}
+	
+	/**
+	 * fileLocation method to return the location of the animal file to perform I/O operations.
 	 * @return String fileLocation
 	 */
-	public static String toFile(){
+	public static String fileLocation(){
 		return FILE_LOCATION;
+	}
+	
+	/**
+	 * Special purpose method to write to a file the contents of the object using a specific format.
+	 * @return String managerInfo
+	 */
+	public String toFile(){
+		String animalInfo = this.animalID + " ; " + this.animalType;
+		
+		return animalInfo;
 	}
 	
 	/**
