@@ -1,16 +1,26 @@
 package animalShelterManager;
 
+/**
+ * This is the ShelterPerson class. This class will store all the attributes about any person object. The attributes
+ * include the first name and last name. This class will be used by any classes that represent a person in the shelter.
+ */
 public abstract class ShelterPerson {
 	//Variable to store the first name of the manager
 	private String firstName;
 	//Variable to store the last name of the manager.
 	private String lastName;
 	
+	//Default constructor for the ShelterPerson
 	public ShelterPerson(){
 		this.firstName = "";
 		this.lastName = "";
 	}
 	
+	/**
+	 * Specific constructor for the ShelterPerson. It accepts two string variables for the first and last name.
+	 * @param fName
+	 * @param lName
+	 */
 	public ShelterPerson(String fName, String lName){
 		this();
 		this.firstName = fName;
@@ -27,7 +37,7 @@ public abstract class ShelterPerson {
 	
 	/**
 	 * Accessor method to return the last name.
-	 * @return
+	 * @return String lastName
 	 */
 	public String getLastName(){
 		return this.lastName;
@@ -63,6 +73,16 @@ public abstract class ShelterPerson {
 		else{
 			this.lastName = lName;
 		}
+	}
+	
+	/**
+	 * Special purpose method to write to a file the contents of the object using a specific format.
+	 * @return String personInfo
+	 */
+	public String toFile(){
+		String personInfo = this.firstName + " ; " + this.lastName + " ; ";
+		
+		return personInfo;
 	}
 	
 	/**
