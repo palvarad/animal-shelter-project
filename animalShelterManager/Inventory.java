@@ -3,7 +3,7 @@ package animalShelterManager;
 /**
 * This is the Inventory class. This class will store all the attributes about the items for sale at the animal shelter.
 * The attributes include the name, purchase and sell prices of the items, and the total number of items for each type, 
-* The items are the only source of revenue of the animal shelter. The class will also handle the details of purchase
+* The items are the only source of revenue for the animal shelter. The class will also handle the details of purchase
 * and sell of inventory.
 */
 public class Inventory {
@@ -11,8 +11,10 @@ public class Inventory {
 	static final private String FILE_LOCATION = "./src/inventoryFile.txt";
 	//Variable to store the max number of items allowed at the shelter.
 	private static final int MAX_INVENTORY = 300;
+	//Variable to store the max number of items the shelter sells.
+	private static final int MAX_ITEMS = 12;
 	//Variable to store the max number of each type of item.
-	private static final int MAX_ITEMS = 25;
+	private static final int MAX_ITEM_TYPES = 25;
 	//Variable to keep track of the number of items available in the animal shelter.
 	private static int inventoryCount = 0;
 	//Variable to store the name of the item
@@ -83,9 +85,17 @@ public class Inventory {
 	
 	/**
 	 * Accessor method to return the max number of items allowed for each type.
+	 * @return int MAX_ITEM_TYPES
+	 */
+	public static int getMaxItemTypesCount(){
+		return MAX_ITEM_TYPES;
+	}
+	
+	/**
+	 * Accessor method to return the max number of items that are sold in the store.
 	 * @return int MAX_ITEMS
 	 */
-	public static int getMaxItemCount(){
+	public static int getMaxItemsCount(){
 		return MAX_ITEMS;
 	}
 	
@@ -188,9 +198,9 @@ public class Inventory {
 			throw new IllegalArgumentException("Invalid number of items. Buying that amount will exceed the inventory limit.\n"
 					+ "Inventory Count:" + Inventory.getInventoryCount() + " Max Inventory: " + Inventory.getMaxInventory());
 		}
-		else if((this.itemCount + amountToPurchase) > Inventory.getMaxItemCount()){
+		else if((this.itemCount + amountToPurchase) > Inventory.getMaxItemTypesCount()){
 			throw new IllegalArgumentException("Invalid number of items. Buying that amount will exceed the item limit.\n"
-					+ "Item Count:" + this.itemCount + " Max Inventory: " + Inventory.getMaxItemCount());
+					+ "Item Count:" + this.itemCount + " Max Inventory: " + Inventory.getMaxItemTypesCount());
 		}
 		else{
 			purchaseTotal = this.inventoryPurchase * amountToPurchase;
@@ -228,11 +238,22 @@ public class Inventory {
 	}
 	
 	/**
-	 * toFile method to return the location of the inventory file to perform I/O operations.
+	 * fileLocation method to return the location of the inventory file to perform I/O operations.
 	 * @return String fileLocation
 	 */
-	public static String toFile(){
+	public static String fileLocation(){
 		return FILE_LOCATION;
+	}
+	
+	/**
+	 * Special purpose method to write to a file the contents of the object using a specific format.
+	 * @return String managerInfo
+	 */
+	public String toFile(){
+		String inventoryInfo = this.inventoryName + " ; " + this.inventoryPurchase + " ; " + this.inventorySell
+						+ " ; " + this.itemCount;
+		
+		return inventoryInfo;
 	}
 	
 	/**

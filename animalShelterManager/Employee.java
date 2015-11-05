@@ -2,8 +2,8 @@ package animalShelterManager;
 
 /**
  * This is the Employee class. This class will store all the attributes about the employee. The attributes
- * include the first name, last name, employee ID, and phone number of the employee at the animal shelter.
- * The employee will be assisting customer that want to adopt an animal from the shelter. 
+ * include the first and last name (inherit from ShelterPerosn), and employee ID. The employee will be 
+ * assisting customer that want to adopt an animal and purchase from the shelter. 
  */
 public class Employee extends ShelterPerson{
 	//Variable to store the location of the manager file.
@@ -65,6 +65,10 @@ public class Employee extends ShelterPerson{
 		return payToEmployee;
 	}
 	
+	/**
+	 * Mutator method to set the number of employees that are currently working at the shelter. The manager is excluded.
+	 * @param count
+	 */
 	public static void setEmployeeCount(int count){
 		employeeCount = count;
 	}
@@ -86,20 +90,32 @@ public class Employee extends ShelterPerson{
 	}
 	
 	/**
-	 * Special purpose method to remove an employee from the file. The employee is set
-	 * to null and the count is decreased by one.
+	 * Special purpose method to remove an employee from the file. The employee is attributes are 
+	 * set to blank and the employee count is decreased by one.
 	 */
 	public static void removeEmployee(Employee fired){
-		fired = null;
+		fired.employeeID = "";
+		fired.setFirstName("");
+		fired.setLastName("");
 		employeeCount--;
 	}
 	
 	/**
-	 * toFile method to return the location of the employee file to perform I/O operations.
+	 * fileLocation method to return the location of the employee file to perform I/O operations.
 	 * @return String fileLocation
 	 */
-	public static String toFile(){
+	public static String fileLocation(){
 		return FILE_LOCATION;
+	}
+	
+	/**
+	 * Special purpose method to write to a file the contents of the object using a specific format.
+	 * @return String managerInfo
+	 */
+	public String toFile(){
+		String employeeInfo = super.toFile() + this.employeeID;
+		
+		return employeeInfo;
 	}
 	
 	/**

@@ -2,13 +2,14 @@ package animalShelterManager;
 
 /**
  * This is the ShelterManager class. This class will store all the attributes about the manager. The attributes
- * include the first name and last name of the manager as well as the password to access the manager menu
- * The manager will have administrative access to everything within the software and the ability to purchase
+ * include the first and last name (inherit from ShleterPerosn) of the manager. Also, the password to access the manager menu
+ * The manager will have administrative access to everything within the system and the ability to purchase
  * inventory supplies, see employee information, as well as generate expense reports.
  */
 public class Manager extends ShelterPerson{
 	//Variable to store the location of the manager file.
 	static final private String FILE_LOCATION = "./src/managerFile.txt";
+	//Variable to store the number of managers that can work in the animal shelter.
 	static final private int MAX_MANAGERS = 1;
 	//Variable to store the password of the manager.
 	private String password;
@@ -18,12 +19,16 @@ public class Manager extends ShelterPerson{
 		this("", "", "");
 	}
 	
-	//Specific constructor to create a ShelterManager object with user defined attributes.
+	//Specific constructor to create a Manager object with user defined attributes.
 	public Manager(String fName, String lName, String pass){
 		super(fName, lName);
 		this.password = pass;
 	}
 	
+	/**
+	 * Accessor method to return the max number of managers the shelter can have.
+	 * @return
+	 */
 	public static int getMaxManagers(){
 		return MAX_MANAGERS;
 	}
@@ -45,30 +50,38 @@ public class Manager extends ShelterPerson{
 		}
 	}
 	
-	
 	/**
 	 * Mutator method to set the password of the manager. If the password is blank an exception is thrown.
 	 * @param pass
 	 * @return boolean
 	 */
-	public boolean setPassword(String pass){
+	public void setPassword(String pass){
 		//If the password is blank then an exception is thrown to inform the user.
 		if(pass.trim().equals("")){
-			throw new IllegalArgumentException("The last name cannot be blank");
+			throw new IllegalArgumentException("The password cannot be blank");
 		}
 		//If the password is not blank then is set an a true is return. 
 		else{
 			this.password = pass;
-			return true;
 		}
 	}
 	
 	/**
-	 * toFile method to return the location of the manager file to perform I/O operations.
+	 * fileLocation method to return the location of the manager file to perform I/O operations.
 	 * @return String fileLocation
 	 */
-	public static String toFile(){
+	public static String fileLocation(){
 		return FILE_LOCATION;
+	}
+	
+	/**
+	 * Special purpose method to write to a file the contents of the object using a specific format.
+	 * @return String managerInfo
+	 */
+	public String toFile(){
+		String managerInfo = super.toFile() + this.password;
+		
+		return managerInfo;
 	}
 	
 	/**

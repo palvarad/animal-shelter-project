@@ -156,11 +156,21 @@ public class ExpenseReport {
 	}
 	
 	/**
-	 * toFile method to return the location of the ExpenseReport file to perform I/O operations.
+	 * fileLocation method to return the location of the ExpenseReport file to perform I/O operations.
 	 * @return String fileLocation
 	 */
-	public static String toFile(){
+	public static String fileLocation(){
 		return FILE_LOCATION;
+	}
+	
+	/**
+	 * Special purpose method to write to a file the contents of the object using a specific format.
+	 * @return String managerInfo
+	 */
+	public String toFile(){
+		String expenseReportInfo = this.reportName + " ; " + this.monthProfit + " ; " + this.monthExpense;
+		
+		return expenseReportInfo;
 	}
 	
 	/**

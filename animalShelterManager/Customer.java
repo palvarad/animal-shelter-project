@@ -2,7 +2,7 @@ package animalShelterManager;
 
 /**
  * This is the Customer class. This class will store all the attributes about the customer. The attributes
- * include the first name, last name, phone number, and the animals they have adopted at the animal shelter.
+ * include the first and last name (inherit from ShleterPerson), phone number, and the animals they have adopted.
  * The customer will be purchasing goods and adopting animals from the shelter. 
  */
 public class Customer extends ShelterPerson{
@@ -78,13 +78,17 @@ public class Customer extends ShelterPerson{
 		return MAX_ADOPTIONS;
 	}
 	
+	/**
+	 * Mutator method to change the number of animals the customer has adopted.
+	 * @param count
+	 */
 	public void setAdoptionCount(int count){
 		this.adoptionCount = count;
 	}
 	
 	/**
 	 * Mutator method to set the phone number of the customer. If the phone number is blank an exception is thrown.
-	 * If the phone number is the incorrect format an exception is thrown.
+	 * If the phone number is the incorrect format(Ex.703-993-1000) an exception is thrown.
 	 * @param String fName
 	 * @return boolean
 	 */
@@ -109,10 +113,12 @@ public class Customer extends ShelterPerson{
 				if(x == PHONE_LEFT_DASH || x == PHONE_RIGHT_DASH){
 					x++;
 				}
+				//If any of the positions where a number should be is not a number then this exception is thrown.
 				if(!Character.isDigit((phone.charAt(x)))){
 					throw new IllegalArgumentException("One or more of the characters in the phone number entered is not a valid number.");
 				}
 			}
+			//If all the checks passed then the phone number is set.
 			this.phoneNumber = phone;
 		}
 	}
@@ -127,11 +133,21 @@ public class Customer extends ShelterPerson{
 	}
 	
 	/**
-	 * toFile method to return the location of the customer file to perform I/O operations.
+	 * fileLocation method to return the location of the customer file to perform I/O operations.
 	 * @return String fileLocation
 	 */
-	public static String toFile(){
+	public static String fileLocation(){
 		return FILE_LOCATION;
+	}
+	
+	/**
+	 * Special purpose method to write to a file the contents of the object using a specific format.
+	 * @return String managerInfo
+	 */
+	public String toFile(){
+		String customerInfo = super.toFile() + this.phoneNumber + " ; ";
+		
+		return customerInfo;
 	}
 	
 	/**
