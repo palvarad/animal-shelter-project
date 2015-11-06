@@ -14,6 +14,7 @@ public class Customer extends ShelterPerson{
 	static final int MAX_PHONE_LENGTH = 12;
 	//Variables to store the position of the dashes in the phone number for validation.
 	static final int PHONE_LEFT_DASH = 3, PHONE_RIGHT_DASH = 7;
+	static int customerCount = 0;
 	//Array of the animals the customer has adopted.
 	private String[] animalsAdopted;
 	//Variable to store the phone number of the customer.
@@ -60,12 +61,7 @@ public class Customer extends ShelterPerson{
 		String adoptionList = "";
 		
 		for(int i = 0; i < this.adoptionCount; i++){
-			if(this.adoptionCount - 1 == i){
-				adoptionList += animalsAdopted[i];
-			}
-			else{
-				adoptionList += animalsAdopted[i] + ", ";
-			}
+			adoptionList += animalsAdopted[i] + " ; ";
 		}
 		return adoptionList;
 	}
@@ -78,12 +74,26 @@ public class Customer extends ShelterPerson{
 		return MAX_ADOPTIONS;
 	}
 	
+	public static int getCustomerCount(){
+		return customerCount;
+	}
+	
 	/**
 	 * Mutator method to change the number of animals the customer has adopted.
 	 * @param count
 	 */
-	public void setAdoptionCount(int count){
-		this.adoptionCount = count;
+	public void setAdoption(String adoptedAnimal){
+		this.animalsAdopted[this.getAdoptionCount()] = adoptedAnimal;
+		this.adoptionCount++;
+	}
+	
+	public void setPhoneNumber(String phone){
+		//If all the checks passed then the phone number is set.
+		this.phoneNumber = phone;
+	}
+	
+	public static void setCustomerCount(int customers){
+		customerCount += customers;
 	}
 	
 	/**
@@ -92,7 +102,7 @@ public class Customer extends ShelterPerson{
 	 * @param String fName
 	 * @return boolean
 	 */
-	public void setPhoneNumber(String phone){
+	public static void validatePhoneNumber(String phone){
 		//If the phone number is blank then an exception is thrown to inform the user.
 		if(phone.trim().equals("")){
 			throw new IllegalArgumentException("The phone number cannot be blank");
@@ -118,8 +128,6 @@ public class Customer extends ShelterPerson{
 					throw new IllegalArgumentException("One or more of the characters in the phone number entered is not a valid number.");
 				}
 			}
-			//If all the checks passed then the phone number is set.
-			this.phoneNumber = phone;
 		}
 	}
 	
@@ -146,6 +154,10 @@ public class Customer extends ShelterPerson{
 	 */
 	public String toFile(){
 		String customerInfo = super.toFile() + this.phoneNumber + " ; ";
+		
+		if(this.getAdoptionCount() > 0){
+			customerInfo += this.getAnimalsAdopted();
+		}
 		
 		return customerInfo;
 	}
