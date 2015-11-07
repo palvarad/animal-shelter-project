@@ -221,6 +221,9 @@ public class Inventory {
 		if(amountToSell <= 0){
 			throw new IllegalArgumentException("Invalid number of items. The number of items to purchase must be positive.");
 		}
+		else if(amountToSell > 10){
+			throw new IllegalArgumentException("Invalid number of items. Only 10 of each item can be purchased.");
+		}
 		else if((this.itemCount - amountToSell) < 0){
 			throw new IllegalArgumentException("Invalid number of items. There are not sufficient items of that item in inventory to complete the sell.\n"
 					+ "Item Count:" + this.itemCount);
