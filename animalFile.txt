@@ -7,3 +7,4 @@ C1006 ; Cat
 B1007 ; Bird
 R1008 ; Rodent
 D1009 ; Dog
+C1010 ; Cat
