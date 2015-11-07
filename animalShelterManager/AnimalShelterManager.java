@@ -13,32 +13,32 @@ public class AnimalShelterManager {
 		final String TITLE = "Animal Shelter Manager";
 		final String[] LOGIN_OPTIONS = {"Manager", "Employee"};
 		final String LOGIN_PROMPT = "Select User Type:";
-		int choice = 0;
+		int choice = 0, terminate = 0;
 		
 		//Arrays to store the different person objects.
-		ShelterPerson shelterManager[] = new Manager[Manager.getMaxManagers()];
+		ShelterPerson[] shelterManager = new Manager[Manager.getMaxManagers()];
 		//Loop to initialize all objects inside the array to avoid errors.
 		for(int x = 0; x < Manager.getMaxManagers(); x++){
 			shelterManager[x] = new Manager();
 		}
 		
-		ShelterPerson shelterEmployees[] = new Employee[Employee.getMaxEmployees()];
+		ShelterPerson[] shelterEmployees = new Employee[Employee.getMaxEmployees()];
 		//Loop to initialize all objects inside the array to avoid errors.
 		for(int x = 0; x < Employee.getMaxEmployees(); x++){
 			shelterEmployees[x] = new Employee();
 		}
 		
-		ShelterPerson shelterCustomers[] = new Customer[10];
+		ShelterPerson[] shelterCustomers = new Customer[10];
 		for(int x = 0; x < 10; x++){
 			shelterCustomers[x] = new Customer();
 		}
 		
-		Inventory shelterInventory[] = new Inventory[Inventory.getMaxItemsCount()];
+		Inventory[] shelterInventory = new Inventory[Inventory.getMaxItemsCount()];
 		for(int x = 0; x < Inventory.getMaxItemsCount(); x++){
 			shelterInventory[x] = new Inventory();
 		}
 		
-		Animal shelterAnimals[] = new Animal[Animal.getMaxAnimals()];
+		Animal[] shelterAnimals = new Animal[Animal.getMaxAnimals()];
 		for(int x = 0; x < Animal.getMaxAnimals(); x++){
 			shelterAnimals[x] = new Animal();
 		}
@@ -58,7 +58,7 @@ public class AnimalShelterManager {
 				try{
 					Manager currentManager = (Manager)shelterManager[0];
 					currentManager.validatePassword(JOptionPane.showInputDialog(null, "Enter the manager password:", TITLE, JOptionPane.QUESTION_MESSAGE));
-					managerMenu();
+					terminate = managerMenu(shelterInventory, shelterAnimals);
 					
 				}catch(IllegalArgumentException e){
 					JOptionPane.showMessageDialog(null, e.getMessage(), TITLE, JOptionPane.ERROR_MESSAGE);
@@ -67,11 +67,54 @@ public class AnimalShelterManager {
 			else if(choice == 1){
 				employeeMenu(shelterCustomers, shelterInventory, shelterAnimals);
 			}
-		}while(choice != -1);
+		}while(terminate != -1);
 	}
 	
-	private static void managerMenu(){
-		//TODO
+	private static int managerMenu(Inventory[] items, Animal[] animals){
+		final String TITLE = "Animal Shelter Manager Menu";
+		final String PROMPT = "Select an option from the menu:\n";
+		final String[] OPTIONS = {"  1) Check Inventory\n", "  2) Order Supplies\n",
+							"  3) Update Employees\n", "  4) Expense Report\n", "  5) Exit\n", "  6) Terminate System\n"};
+		final String ERROR_NFE = "Please enter a number to select an option.";
+		final String ERROR_MENU = "Please select an option from the menu.";
+		int managerChoice = 0, terminationChoice = 0;
+		
+		do{
+			try{
+				managerChoice = Integer.parseInt(JOptionPane.showInputDialog(null, PROMPT + OPTIONS[0] + OPTIONS[1] + OPTIONS[2]
+						+ OPTIONS[3] + OPTIONS[4] + OPTIONS[5] , TITLE, JOptionPane.QUESTION_MESSAGE));
+				
+				switch(managerChoice){
+					case 1:
+						checkInventory(items);
+						break;
+					case 2:
+						//TODO
+						break;
+					case 3:
+						//TODO
+						break;
+					case 4:
+						//TODO
+						break;
+					case 5:
+						JOptionPane.showMessageDialog(null, "Returning to Login Screen", TITLE, JOptionPane.INFORMATION_MESSAGE);
+						break;
+					case 6:
+						JOptionPane.showMessageDialog(null, "Shutting Down System", TITLE, JOptionPane.INFORMATION_MESSAGE);
+						terminationChoice = -1;
+						managerChoice = 5;
+						break;
+					default:
+						JOptionPane.showMessageDialog(null, ERROR_MENU, TITLE, JOptionPane.ERROR_MESSAGE);
+				}
+			}catch(NumberFormatException e){
+				JOptionPane.showMessageDialog(null, ERROR_NFE, TITLE, JOptionPane.ERROR_MESSAGE);
+			}
+			
+		}while(managerChoice != 5);
+		
+		return terminationChoice;
 	}
 	
 	private static void employeeMenu(ShelterPerson[] customers, Inventory[] items, Animal[] animals){
@@ -99,9 +142,10 @@ public class AnimalShelterManager {
 						purchaseItem(items);
 						break;
 					case 4:
-						//TODO Method here.
+						animalPopulation();
 						break;
 					case 5:
+						JOptionPane.showMessageDialog(null, "Returning to Login Screen", TITLE, JOptionPane.INFORMATION_MESSAGE);
 						break;
 					default:
 						JOptionPane.showMessageDialog(null, ERROR_MENU, TITLE, JOptionPane.ERROR_MESSAGE);
@@ -120,6 +164,7 @@ public class AnimalShelterManager {
 		boolean customerFound = false;
 		Customer tempCustomer = null;
 		
+		//TODO add loop to re-prompt
 		try{
 			phoneNum = JOptionPane.showInputDialog(null, "Enter the customer's phone number:", TITLE, JOptionPane.QUESTION_MESSAGE);
 			Customer.validatePhoneNumber(phoneNum);
@@ -133,17 +178,16 @@ public class AnimalShelterManager {
 					}
 				}
 			}
-		if(customerFound){
-			JOptionPane.showMessageDialog(null, "Welcome Back " + customers[foundIndex].getFirstName() + "!");
-			adoptAnimal((Customer)customers[foundIndex], animals);
-		}
-		else if(!customerFound){
-			JOptionPane.showMessageDialog(null, "Customer information not found. You must create a new account.");
-			createNewCustomer((Customer)customers[Customer.getCustomerCount()], phoneNum);
-		}
+			if(customerFound){
+				JOptionPane.showMessageDialog(null, "Welcome Back " + customers[foundIndex].getFirstName() + "!");
+				adoptAnimal((Customer)customers[foundIndex], animals);
+			}
+			else if(!customerFound){
+				JOptionPane.showMessageDialog(null, "Customer information not found. You must create a new account.");
+				createNewCustomer((Customer)customers[Customer.getCustomerCount()], phoneNum);
+			}
 			
-		writeShelterPersonToFile(customers);
-			
+			writeShelterPersonToFile(customers);
 		}catch(IllegalArgumentException e){
 			JOptionPane.showMessageDialog(null, e.getMessage(), TITLE, JOptionPane.ERROR_MESSAGE);
 		}
@@ -155,6 +199,7 @@ public class AnimalShelterManager {
 		final String FNAME_PROMPT = "Enter the customer's first name:";
 		final String LNAME_PROMPT = "Enter the customer's last name:";
 		
+		//TODO add loops to re-prompt
 		try{
 			newCustomer.setPhoneNumber(phone);
 			newCustomer.setFirstName(JOptionPane.showInputDialog(null, FNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
@@ -170,7 +215,6 @@ public class AnimalShelterManager {
 		int choice = animalMenu();
 		String animalType = "", adoptionMessage = "The following ";
 		
-		//TODO Add while and try and catch
 		switch(choice){
 			case 1:
 				animalType = "Dog";
@@ -229,13 +273,92 @@ public class AnimalShelterManager {
 	}
 	
 	private static void purchaseItem(Inventory[] items){
-		int item = inventoryMenu();
-		JOptionPane.showMessageDialog(null, items[item].toString());
+		final String TITLE = "Animal Shelter Purchase Menu";
+		int purchaseCount = 0, buyMore = 0, item = 0;
+		String receipt = "", quantityPrompt = "", morePurchasesPrompt = "Would you like to make another purchase?", header = "";
+		double total = 0;
+		String[] itemNames = new String[Inventory.getMaxItemsCount()];
+		int[] itemQuan = new int[Inventory.getMaxItemsCount()];
+		double[] itemPrices = new double[Inventory.getMaxItemsCount()];
+		
+		do{
+			item = inventoryMenu();
+			quantityPrompt = "Enter the number of " + items[item].getItemName() + " to purchase:";
+			itemNames[purchaseCount] = items[item].getItemName();
+		
+			try{
+				itemQuan[purchaseCount] = Integer.parseInt(JOptionPane.showInputDialog(null, quantityPrompt, TITLE, JOptionPane.QUESTION_MESSAGE));
+				itemPrices[purchaseCount] = items[item].inventorySell(itemQuan[purchaseCount]);
+				
+				purchaseCount++;
+				header = "Receipt Preview:\n";
+				
+				for(int x = 0; x < purchaseCount; x++){
+					receipt += "  Item " + (x + 1) + ": " + itemNames[x] + " || Qty: " + itemQuan[x] 
+							+ " || Cost: " + String.format("$%,.2f", itemPrices[x]) + "\n";
+					total += itemPrices[x];
+				}
+				
+			
+				JOptionPane.showMessageDialog(null, header + receipt + "  Total: " + String.format("$%,.2f", total));
+			}catch(NumberFormatException e){
+				JOptionPane.showMessageDialog(null, "The quantity must a numeric value.", TITLE, JOptionPane.ERROR_MESSAGE);
+				
+			}catch(IllegalArgumentException e){
+				JOptionPane.showMessageDialog(null, e.getMessage(), TITLE, JOptionPane.ERROR_MESSAGE);
+			}
+			
+			buyMore = JOptionPane.showConfirmDialog(null, morePurchasesPrompt, TITLE, JOptionPane.YES_NO_OPTION);
+			if(buyMore == JOptionPane.YES_OPTION){
+				receipt = "";
+				total = 0;
+			}
+		}while(buyMore != JOptionPane.NO_OPTION);
+		
+		header = "Final Receipt:\n";
+		JOptionPane.showMessageDialog(null, header + receipt + "  Total: " + String.format("$%,.2f", total));
+		writeInventoryToFile(items);
+	}
+	
+	private static void animalPopulation(){
+		final String TITLE = "Animal Shelter Population Menu";
+		String header = "Animal Population:\n";
+		
+		String dogCount = "  Dog Population: " + Animal.getTypeCount("Dog") + "\n";
+		String catCount = "  Cat Population: " + Animal.getTypeCount("Cat") + "\n";
+		String rodentCount = "  Small Rodent Population: " + Animal.getTypeCount("Rodent") + "\n";
+		String birdCount = "  Bird Population: " + Animal.getTypeCount("Bird") + "\n";
+		String currentPop = "  Current Population: " + Animal.getAnimalCount() + "\n";
+		String maxPop = "  Max Population: " + Animal.getMaxAnimals();
+		
+		JOptionPane.showMessageDialog(null, header + dogCount + catCount + rodentCount +
+				birdCount + currentPop + maxPop, TITLE, JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	private static void checkInventory(Inventory[] items){
+		final String TITLE = "Animal Shelter Inventory Menu";
+		String header = "Inventory Screen 1/2:\n";
+		String dogInv = "Dog Inventory:\n   Food: " + items[0].getItemCount() + "\n   Medicine: " + items[1].getItemCount() + "\n";
+		String catInv = "Cat Inventory:\n   Food: " + items[2].getItemCount() + "\n   Medicine: " + items[3].getItemCount() + "\n";
+		String rodInv = "Rodent Inventory:\n   Food: " + items[4].getItemCount() + "\n   Medicine: " + items[5].getItemCount() + "\n";
+		String birdInv = "Bird Inventory:\n   Food: " + items[6].getItemCount() + "\n   Medicine: " + items[7].getItemCount() + "\n";
+		
+		JOptionPane.showMessageDialog(null, header + dogInv + catInv + rodInv + birdInv, TITLE, JOptionPane.INFORMATION_MESSAGE);
+		
+		header = "Inventory Screen 2/2:\n";
+		String lInv = "  " + items[8].getItemName() + " : " + items[8].getItemCount() + "\n";
+		String cInv = "  " + items[9].getItemName() + " : " + items[9].getItemCount() + "\n";
+		String fInv = "  " + items[10].getItemName() + " : " + items[10].getItemCount() + "\n";
+		String tInv = "  " + items[11].getItemName() + " : " + items[11].getItemCount() + "\n";
+		String total = "Total: " + Inventory.getInventoryCount() + "\n";
+		String max = "Max: " + Inventory.getMaxInventory() + "\n";
+		
+		JOptionPane.showMessageDialog(null, header + lInv + cInv + fInv + tInv + total + max, TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	private static int animalMenu(){
 		final String TITLE = "Animal Shelter Employee Menu";
-		final String PROMPT = "Select the type of animal to add:\n";
+		final String PROMPT = "Select the type of animal:\n";
 		final String[] OPTIONS = {"  1) Dog\n", "  2) Cat\n", "  3) Small Rodent\n", "  4) Bird\n"};
 		final String ERROR_NFE = "Please enter a number to select an option.";
 		final String ERROR_MENU = "Please select an option from the menu.";
@@ -263,7 +386,7 @@ public class AnimalShelterManager {
 	
 	private static int inventoryMenu(){
 		final String TITLE = "Animal Shelter Employee Menu";
-		final String PROMPT = "Select the type of animal to add:\n";
+		final String PROMPT = "Select an item:\n";
 		final String[] OPTIONS = {"  1) Food\n", "  2) Medicine\n", "  3) Food Bowl\n", "  4) Leashes\n", "  5) Collars\n",
 				"  6) Toys\n"};
 		final String ERROR_NFE = "Please enter a number to select an option.";
@@ -329,10 +452,6 @@ public class AnimalShelterManager {
 		}
 		
 		writeAnimalToFile(animals);
-	}
-	
-	private static void printReceipt(Inventory item, int quantity){
-		
 	}
 	
 	private static void readPersonFile(ShelterPerson[] persons, String filePath){
@@ -424,7 +543,7 @@ public class AnimalShelterManager {
 						
 				//Finds the first semicolon and cuts the unnecessary parts to only have the first name.
 				divPosition = line.indexOf(';') + lastInfoDiv;
-				items[itemIndex].setItemName(line.substring(lastInfoDiv, divPosition));
+				items[itemIndex].setItemName(line.substring(lastInfoDiv, divPosition).trim());
 				lastInfoDiv = line.indexOf(';') + 1;
 
 				//Finds the next semicolon and cuts the unnecessary parts to only have the last name.
@@ -536,6 +655,23 @@ public class AnimalShelterManager {
 			
 			for(int x = 0; x < Animal.getAnimalCount(); x++){
 				writer.println(animals[x].toFile());
+			}
+			
+			writer.close();
+		}catch(FileNotFoundException e){
+			JOptionPane.showMessageDialog(null, "File was not found.", TITLE, JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private static void writeInventoryToFile(Inventory[] items){
+		final String TITLE = "Animal Shelter Menu";
+		PrintWriter writer = null;
+		
+		try{
+			writer = new PrintWriter(new FileOutputStream(Inventory.fileLocation()));
+			
+			for(int x = 0; x < Inventory.getMaxItemsCount(); x++){
+				writer.println(items[x].toFile());
 			}
 			
 			writer.close();
