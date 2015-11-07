@@ -1,12 +1,12 @@
-Dog Food ; 20.00 ; 35.00 ; 15
-Dog Medicine ; 15.00 ; 25.00 ; 15
-Cat Food ; 15.00 ; 25.00 ; 15
-Cat Medicine ; 10.00 ; 20.00 ; 15
-Rodent Food ; 12.00 ; 20.00 ; 15
-Rodent Medicine ; 8.00 ; 15.00 ; 15
-Bird Food ; 10.00 ; 20.00 ; 15
-Bird Medicine ; 8.00 ; 15.00 ; 15
-Food Bowls ; 2.00 ; 5.00 ; 15 
-Leashes ; 1.00 ; 2.00 ; 15
-Collars ; 5.00 ; 8.00 ; 15
-Toys ; 10.00 ; 15.00 ; 15
+Dog Food ; 20.0 ; 35.0 ; 14
+Dog Medicine ; 15.0 ; 25.0 ; 15
+Cat Food ; 15.0 ; 25.0 ; 15
+Cat Medicine ; 10.0 ; 20.0 ; 15
+Rodent Food ; 12.0 ; 20.0 ; 15
+Rodent Medicine ; 8.0 ; 15.0 ; 15
+Bird Food ; 10.0 ; 20.0 ; 15
+Bird Medicine ; 8.0 ; 15.0 ; 15
+Food Bowls ; 2.0 ; 5.0 ; 15
+Leashes ; 1.0 ; 2.0 ; 15
+Collars ; 5.0 ; 8.0 ; 15
+Toys ; 10.0 ; 15.0 ; 14
