@@ -33,8 +33,8 @@ public class AnimalShelterManager {
 			shelterCustomers[x] = new Customer();
 		}
 		
-		List<Animal> shelterAnimals = new LinkedList<Animal>();
-		List<Inventory> shelterInventory = new LinkedList<Inventory>();
+		List<Animal> shelterAnimals = new ArrayList<Animal>();
+		List<Inventory> shelterInventory = new ArrayList<Inventory>();
 		
 		ExpenseReport currentExpenses = new ExpenseReport("Current Report", 0, 0);
 		
@@ -712,9 +712,8 @@ public class AnimalShelterManager {
 			}
 		}
 		
-		animalCount = animalTypeCount(animals, animalChoice);
-		
 		if(multiple){
+			animalCount = animalTypeCount(animals, animalChoice);
 			totalCost = ExpenseReport.calculateAnimalExpense(animalCount, foodCost, medicineCost);
 			header += "the " + animalType + " population per month:\n Population: " + animalCount + "\n";
 		}
