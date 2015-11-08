@@ -200,7 +200,7 @@ public class Inventory {
 		}
 		else if((this.itemCount + amountToPurchase) > Inventory.getMaxItemTypesCount()){
 			throw new IllegalArgumentException("Invalid number of items. Buying that amount will exceed the item limit.\n"
-					+ "Item Count:" + this.itemCount + " Max Inventory: " + Inventory.getMaxItemTypesCount());
+					+ "Item Count: " + this.itemCount + " Max Inventory: " + Inventory.getMaxItemTypesCount());
 		}
 		else{
 			purchaseTotal = this.inventoryPurchase * amountToPurchase;
@@ -226,11 +226,11 @@ public class Inventory {
 		}
 		else if((this.itemCount - amountToSell) < 0){
 			throw new IllegalArgumentException("Invalid number of items. There are not sufficient items of that item in inventory to complete the sell.\n"
-					+ "Item Count:" + this.itemCount);
+					+ "Item Count: " + this.itemCount);
 		}
 		else if((inventoryCount - amountToSell) < 0){
 			throw new IllegalArgumentException("Invalid number of items. There are not sufficient items in inventory to complete the sell.\n"
-					+ "Inventory Count:" + inventoryCount);
+					+ "Inventory Count: " + inventoryCount);
 		}
 		else{
 			sellTotal = this.inventorySell * amountToSell;

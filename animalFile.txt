@@ -3,8 +3,8 @@ R1002 ; Rodent
 D1003 ; Dog
 R1004 ; Rodent
 B1005 ; Bird
-C1006 ; Cat
 B1007 ; Bird
 R1008 ; Rodent
 D1009 ; Dog
 C1010 ; Cat
+R1011 ; Rodent

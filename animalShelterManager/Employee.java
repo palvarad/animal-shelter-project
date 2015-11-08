@@ -9,7 +9,7 @@ public class Employee extends ShelterPerson{
 	//Variable to store the location of the manager file.
 	static final private String FILE_LOCATION = "./src/employeeFile.txt";
 	//Variable to store the max number of employees that can work at the animal shelter.
-	static final private int MAX_EMPLOYEES = 5;
+	static final private int MAX_EMPLOYEES = 5, EMPLOYEE_ID_LENGTH  = 3;
 	//Variable to store the dollars per hour the employees are paid.
 	static final private double EMPLOYEE_PAY = 10.00;
 	//Variable to store the number max number of hours an employee can work per week.
@@ -81,23 +81,22 @@ public class Employee extends ShelterPerson{
 	public void setEmployeeId(String id){
 		//If the name is blank then an exception is thrown to inform the user.
 		if(id.trim().equals("")){
-			throw new IllegalArgumentException("The last name cannot be blank");
+			throw new IllegalArgumentException("The employee id cannot be blank");
+		}
+		else if(id.trim().length() != EMPLOYEE_ID_LENGTH){
+			throw new IllegalArgumentException("The employee id must be " + EMPLOYEE_ID_LENGTH + " characters in lenght.");
 		}
 		//If the name is not blank then the name is stored and a true is return.
 		else{
+			//For loop to check that all the characters entered except the dashes are valid numbers.
+			for(int x = 0; x < EMPLOYEE_ID_LENGTH; x++){
+				//If any of the positions where a number should be is not a number then this exception is thrown.
+				if(!Character.isDigit((id.charAt(x)))){
+					throw new IllegalArgumentException("All characters in the employee id must be numeric values.");
+				}
+			}
 			this.employeeID = id;
 		}
-	}
-	
-	/**
-	 * Special purpose method to remove an employee from the file. The employee is attributes are 
-	 * set to blank and the employee count is decreased by one.
-	 */
-	public static void removeEmployee(Employee fired){
-		fired.employeeID = "";
-		fired.setFirstName("");
-		fired.setLastName("");
-		employeeCount--;
 	}
 	
 	/**
@@ -123,7 +122,7 @@ public class Employee extends ShelterPerson{
 	 * @return String managerInfo
 	 */
 	public String toString(){
-		String employeeInfo = "ID: " + this.employeeID + super.toString();
+		String employeeInfo = "ID: " + this.employeeID + " " + super.toString();
 		
 		return employeeInfo;
 	}

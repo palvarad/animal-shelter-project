@@ -56,6 +56,14 @@ public class ExpenseReport {
 		return this.monthProfit;
 	}
 	
+	public static int getFoodMultiplier(){
+		return FOOD_MULTIPLY;
+	}
+	
+	public static int getMedicineMultiplier(){
+		return  MEDICINE_MULTIPLY;
+	}
+	
 	/**
 	 * Mutator method to set the name of the report. If the name is blank an exception is thrown.
 	 * @param String rName
@@ -92,6 +100,14 @@ public class ExpenseReport {
 		this.monthExpense += expense;
 	}
 	
+	public static double calculateMonthlyExpense(double expense, int multiplier){
+		double monthlyExpense = 0;
+		
+		monthlyExpense = expense * multiplier;
+		
+		return monthlyExpense;
+	}
+	
 	/**
 	 * Special purpose method to calculate the cost of an animal or a group of animals
 	 * @param numberOf (This variable represents the number of animals to multiply the expense by) 
@@ -101,7 +117,7 @@ public class ExpenseReport {
 	 */
 	public static double calculateAnimalExpense(int numberOf, double foodExpense, double medicineExpense){
 		double total = 0;
-		total = (foodExpense * FOOD_MULTIPLY) + (medicineExpense * MEDICINE_MULTIPLY);
+		total = foodExpense + medicineExpense;
 		total = total * numberOf;
 		
 		return total;
@@ -164,21 +180,12 @@ public class ExpenseReport {
 	}
 	
 	/**
-	 * Special purpose method to write to a file the contents of the object using a specific format.
-	 * @return String managerInfo
-	 */
-	public String toFile(){
-		String expenseReportInfo = this.reportName + " ; " + this.monthProfit + " ; " + this.monthExpense;
-		
-		return expenseReportInfo;
-	}
-	
-	/**
 	 * toString method to return the name, profit, and expense.
 	 * @return String expenseReportInfo
 	 */
 	public String toString(){
-		String expenseReportInfo = "Name:" + this.reportName + "Profit: " + this.monthProfit + "Expense: " + this.monthExpense;
+		String expenseReportInfo = "Name: " + this.reportName + " Profit: " + 
+					String.format("$%,.2f", this.monthProfit) + " Expense: " + String.format("$%,.2f" ,this.monthExpense);
 		
 		return expenseReportInfo;
 	}

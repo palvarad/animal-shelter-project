@@ -12,12 +12,14 @@ public class Animal {
 	private static final int INIT_ID = 1000;
 	//Variable to store the max number of animals that can be at the shelter.
 	private static final int MAX_ANIMALS = 100;
+	//Array to store the available types of animals at the shelter.
+	private static final String[] ANIMAL_TYPES = {"Dog", "Cat","Rodent", "Bird"};
 	//variables to store the initial letter associated for each type to be used for the ID
-	private static Character dogInit = 'D', catInit = 'C', rodentInit = 'R', birdInit = 'B';
-	//Variables to store the total number of animals of each type at the shelter
-	private static int dogCount = 0, catCount = 0, rodentCount = 0, birdCount = 0;
-	//Variable to store the total number of animals at the shelter.
+	private static Character[] ANIMAL_INITS = {'D', 'C', 'R', 'B'};
+	//Variable to store the total number of animals that have been in the shelter.
 	private static int animalCount;
+	//Variable to store the total number of animals that have ever been in the shelter.
+	private static int animalHistory;
 	//Variable to store the animal type
 	private String animalType;
 	//Variable to store the id of the animal
@@ -61,6 +63,38 @@ public class Animal {
 	}
 	
 	/**
+	 * Accessor method to return the animal type count by using the length of the array.
+	 * @return
+	 */
+	public static int getAnimalTypesCount(){
+		return ANIMAL_TYPES.length;
+	}
+	
+	/**
+	 * Accessor method to return the animal type using from the array.
+	 * @return
+	 */
+	public static String getAnimalTypes(int index){
+		return ANIMAL_TYPES[index];
+	}
+	
+	/**
+	 * Accessor method to retrieve the value of the animal history count.
+	 * @return historyCount
+	 */
+	public static int getAnimalHistory(){
+		return animalHistory;
+	}
+	
+	/**
+	 * Mutator method to change the value of the animal history count to avoid duplicate IDs.
+	 * @param historyCount
+	 */
+	public static void setAnimalHistory(int historyCount){
+		animalHistory = historyCount;
+	}
+	
+	/**
 	 * Mutator method to set the animal type. If the type is empty then an exception is thrown.
 	 * @param type
 	 * @return void
@@ -87,21 +121,6 @@ public class Animal {
 	public static String animalAdopted(Animal adopted){
 		animalCount--;
 		
-		switch(adopted.getAnimalType()){
-			case "Dog":
-				dogCount--;
-				break;
-			case "Cat":
-				catCount--;
-				break;
-			case "Rodent":
-				rodentCount--;
-				break;
-			case "Bird":
-				birdCount--;
-				break;
-		}
-		
 		return adopted.getAnimalID();
 	}
 	
@@ -111,51 +130,6 @@ public class Animal {
 	 */
 	public static int getAnimalCount(){
 		return animalCount;
-	}
-	
-	/**
-	 * Special purpose method to return the number of animals of a specific type.
-	 * @param type
-	 * @return
-	 */
-	public static int getTypeCount(String type){
-		int typeCount = 0;
-		
-		switch(type){
-			case "Dog":
-				typeCount = dogCount;
-				break;
-			case "Cat":
-				typeCount = catCount;
-				break;
-			case "Rodent":
-				typeCount = rodentCount;
-				break;
-			case "Bird":
-				typeCount = birdCount;
-				break;
-		}
-		return typeCount;
-	}
-	
-	public static int setTypeCount(String type){
-		int typeCount = 0;
-		
-		switch(type){
-			case "Dog":
-				dogCount++;
-				break;
-			case "Cat":
-				catCount++;
-				break;
-			case "Rodent":
-				rodentCount++;
-				break;
-			case "Bird":
-				birdCount++;
-				break;
-		}
-		return typeCount;
 	}
 	
 	public void setAnimalID(String id){
@@ -178,25 +152,15 @@ public class Animal {
 	private static String createAnimalID(String typeToCreate){
 		String newID = "";
 		animalCount++;
+		animalHistory++;
 		
-		switch(typeToCreate){
-			case "Dog":
-				newID = dogInit + Integer.toString((INIT_ID + animalCount));
-				dogCount++;
+		for(int x = 0; x < ANIMAL_TYPES.length; x++ ){
+			if(typeToCreate.equals(getAnimalTypes(x))){
+				newID = ANIMAL_INITS[x] + Integer.toString((INIT_ID + animalHistory));
 				break;
-			case "Cat":
-				newID = catInit + Integer.toString((INIT_ID + animalCount));
-				catCount++;
-				break;
-			case "Rodent":
-				newID = rodentInit + Integer.toString((INIT_ID + animalCount));
-				rodentCount++;
-				break;
-			case "Bird":
-				newID = birdInit + Integer.toString((INIT_ID + animalCount));
-				birdCount++;
-				break;
+			}
 		}
+		
 		return newID;
 	}
 	

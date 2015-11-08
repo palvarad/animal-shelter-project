@@ -1,0 +1,12 @@
+Name: Month 1 Profit: $0.00 Expense: $0.00
+Name: Month 2 Profit: $15,300.00 Expense: $9,806.25
+Name: Month 3 Profit: $15,155.00 Expense: $10,062.50
+Name: Month 4 Profit: $15,300.00 Expense: $9,806.25
+Name: Month 5 Profit: $15,155.00 Expense: $10,062.50
+Name: Month 6 Profit: $13,850.00 Expense: $12,368.75
+Name: Month 7 Profit: $15,300.00 Expense: $9,806.25
+Name: Month 8 Profit: $14,720.00 Expense: $10,831.25
+Name: Month 9 Profit: $15,155.00 Expense: $10,062.50
+Name: Month 10 Profit: $14,865.00 Expense: $10,575.00
+Name: Month 11 Profit: $14,285.00 Expense: $11,600.00
+Name: Month 12 Profit: $13,995.00 Expense: $12,112.50
