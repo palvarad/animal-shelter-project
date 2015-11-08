@@ -1,4 +1,3 @@
-R1002 ; Rodent
 D1003 ; Dog
 R1004 ; Rodent
 B1007 ; Bird

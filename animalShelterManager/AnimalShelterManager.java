@@ -33,12 +33,8 @@ public class AnimalShelterManager {
 			shelterCustomers[x] = new Customer();
 		}
 		
-		Inventory[] shelterInventory = new Inventory[Inventory.getMaxItemsCount()];
-		for(int x = 0; x < Inventory.getMaxItemsCount(); x++){
-			shelterInventory[x] = new Inventory();
-		}
-		
 		List<Animal> shelterAnimals = new LinkedList<Animal>();
+		List<Inventory> shelterInventory = new LinkedList<Inventory>();
 		
 		ExpenseReport currentExpenses = new ExpenseReport("Current Report", 0, 0);
 		
@@ -75,7 +71,7 @@ public class AnimalShelterManager {
 		}while(terminate != -1);
 	}
 	
-	private static int managerMenu(Inventory[] items, List<Animal> animals, ShelterPerson[] employees, ExpenseReport current){
+	private static int managerMenu(List<Inventory> items, List<Animal> animals, ShelterPerson[] employees, ExpenseReport current){
 		final String TITLE = "Animal Shelter Manager Menu";
 		final String PROMPT = "Select an option from the menu:\n";
 		final String[] OPTIONS = {"  1) Check Inventory\n", "  2) Order Supplies\n",
@@ -122,7 +118,7 @@ public class AnimalShelterManager {
 		return terminationChoice;
 	}
 	
-	private static void employeeMenu(ShelterPerson[] customers, Inventory[] items, List<Animal> animals, ExpenseReport current){
+	private static void employeeMenu(ShelterPerson[] customers, List<Inventory> items, List<Animal> animals, ExpenseReport current){
 		final String TITLE = "Animal Shelter Employee Menu";
 		final String PROMPT = "Select an option from the menu:\n";
 		final String[] OPTIONS = {"  1) Adopt an animal\n", "  2) Add an animal\n",
@@ -162,7 +158,7 @@ public class AnimalShelterManager {
 		}while(employeeChoice != 5);
 	}
 	
-	private static void animalAdoption(ShelterPerson[] customers, List<Animal> animals, Inventory[] items, ExpenseReport current){
+	private static void animalAdoption(ShelterPerson[] customers, List<Animal> animals,  List<Inventory> items, ExpenseReport current){
 		final String TITLE = "Animal Shelter Adooption Menu";
 		int foundIndex = 0;
 		String phoneNum = "";
@@ -231,7 +227,7 @@ public class AnimalShelterManager {
 		}while(!valid);
 	}
 	
-	private static void adoptAnimal(Customer oldCustomer, List<Animal> animals, Inventory[] items, ExpenseReport current){
+	private static void adoptAnimal(Customer oldCustomer, List<Animal> animals,  List<Inventory> items, ExpenseReport current){
 		final String TITLE = "Animal Shelter Adooption Menu";
 		final int PURCHASE_REQUIREMENT = 2;
 		int choice = animalMenu();
@@ -240,23 +236,14 @@ public class AnimalShelterManager {
 		double total = 0;
 		String animalType = Animal.getAnimalTypes(choice), adoptionMessage = "The following ", adoptionMessageCont = "";
 		
-		switch(choice){
-			case 1:
-				foodCost = ExpenseReport.calculateMonthlyExpense(items[0].getItemSellCost(), PURCHASE_REQUIREMENT);
-				medicineCost = ExpenseReport.calculateMonthlyExpense(items[1].getItemSellCost(), PURCHASE_REQUIREMENT);
+		for(Inventory i : items){
+			if(i.getItemName().contains(animalType + " F")){
+				foodCost = (i.getItemSellCost() * PURCHASE_REQUIREMENT);
+			}
+			if(i.getItemName().contains(animalType + " M")){
+				medicineCost = (i.getItemSellCost() * PURCHASE_REQUIREMENT);
 				break;
-			case 2:
-				foodCost = ExpenseReport.calculateMonthlyExpense(items[2].getItemSellCost(), PURCHASE_REQUIREMENT);
-				medicineCost = ExpenseReport.calculateMonthlyExpense(items[3].getItemSellCost(), PURCHASE_REQUIREMENT);
-				break;
-			case 3:
-				foodCost = ExpenseReport.calculateMonthlyExpense(items[4].getItemSellCost(), PURCHASE_REQUIREMENT);
-				medicineCost = ExpenseReport.calculateMonthlyExpense(items[5].getItemSellCost(), PURCHASE_REQUIREMENT);
-				break;
-			case 4:
-				foodCost = ExpenseReport.calculateMonthlyExpense(items[6].getItemSellCost(), PURCHASE_REQUIREMENT);
-				medicineCost = ExpenseReport.calculateMonthlyExpense(items[7].getItemSellCost(), PURCHASE_REQUIREMENT);
-				break;
+			}
 		}
 		
 		total = foodCost + medicineCost;
@@ -290,7 +277,7 @@ public class AnimalShelterManager {
 		JOptionPane.showMessageDialog(null, message, TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	private static void purchaseItem(Inventory[] items, ExpenseReport current){
+	private static void purchaseItem( List<Inventory> items, ExpenseReport current){
 		final String TITLE = "Animal Shelter Purchase Menu";
 		int purchaseCount = 0, buyMore = 0, item = 0;
 		String receipt = "", quantityPrompt = "", morePurchasesPrompt = "Would you like to make another purchase?", header = "";
@@ -301,12 +288,12 @@ public class AnimalShelterManager {
 		
 		do{
 			item = inventoryMenu(items);
-			quantityPrompt = "Enter the number of " + items[item].getItemName() + " to purchase:";
-			itemNames[purchaseCount] = items[item].getItemName();
+			quantityPrompt = "Enter the number of " + items.get(item).getItemName() + " to purchase:";
+			itemNames[purchaseCount] = items.get(item).getItemName(); 
 		
 			try{
 				itemQuan[purchaseCount] = Integer.parseInt(JOptionPane.showInputDialog(null, quantityPrompt, TITLE, JOptionPane.QUESTION_MESSAGE));
-				itemPrices[purchaseCount] = items[item].inventorySell(itemQuan[purchaseCount]);
+				itemPrices[purchaseCount] = items.get(item).inventorySell(itemQuan[purchaseCount]);
 				
 				purchaseCount++;
 				header = "Receipt Preview:\n";
@@ -372,25 +359,21 @@ public class AnimalShelterManager {
 		JOptionPane.showMessageDialog(null, header + population + currentPop + maxPop, TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	private static void checkInventory(Inventory[] items){
+	private static void checkInventory(List<Inventory> items){
 		final String TITLE = "Animal Shelter Inventory Menu";
-		String header = "Inventory Screen 1/2:\n";
+		String header = "Inventory Screen:\n";
 		String inventoryPrint = "";
-		for(int x = 0; x < Inventory.getMaxItemsCount(); x++){
-			inventoryPrint += "  " + items[x].getItemName() + ": " + items[x].getItemCount() + "\n";
-			if(x == 7){
-				JOptionPane.showMessageDialog(null, header + inventoryPrint, TITLE, JOptionPane.INFORMATION_MESSAGE);
-				inventoryPrint = "";
-			}
+		
+		for(Inventory i : items){
+			inventoryPrint += "  " + i.getItemName() + ": " + i.getItemCount() + "\n";
 		}
 		
-		header = "Inventory Screen 2/2:\n";
 		String total = "Total: " + Inventory.getInventoryCount() + "\n";
 		String max = "Max: " + Inventory.getMaxInventory() + "\n";
 		JOptionPane.showMessageDialog(null, header + inventoryPrint + total + max, TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	private static void orderSupplies(Inventory[] items, ExpenseReport current){
+	private static void orderSupplies(List<Inventory> items, ExpenseReport current){
 		final String TITLE = "Animal Shelter Purchase Menu";
 		int purchaseCount = 0, buyMore = 0, item = 0;
 		String receipt = "", quantityPrompt = "", morePurchasesPrompt = "Would you like to make another purchase?", header = "";
@@ -401,12 +384,12 @@ public class AnimalShelterManager {
 		
 		do{
 			item = inventoryMenu(items);
-			quantityPrompt = "Enter the number of " + items[item].getItemName() + " to purchase:";
-			itemNames[purchaseCount] = items[item].getItemName();
+			quantityPrompt = "Enter the number of " + items.get(item).getItemName() + " to purchase:";
+			itemNames[purchaseCount] = items.get(item).getItemName();
 		
 			try{
 				itemQuan[purchaseCount] = Integer.parseInt(JOptionPane.showInputDialog(null, quantityPrompt, TITLE, JOptionPane.QUESTION_MESSAGE));
-				itemPrices[purchaseCount] = items[item].inventoryPurchase((itemQuan[purchaseCount]));
+				itemPrices[purchaseCount] = items.get(item).inventoryPurchase((itemQuan[purchaseCount]));
 				
 				purchaseCount++;
 				header = "Receipt Preview:\n";
@@ -570,7 +553,7 @@ public class AnimalShelterManager {
 		}
 	}
 	
-	private static void expenseManagement(Inventory[] items, List<Animal> animals, ShelterPerson[] employees, ExpenseReport current){
+	private static void expenseManagement(List<Inventory> items, List<Animal> animals, ShelterPerson[] employees, ExpenseReport current){
 		final String TITLE = "Animal Shelter Expense Menu";
 		final String PROMPT = "Select an option from the menu:\n";
 		final String[] OPTIONS = {"  1) Display current report\n", "  2) Display 12 month simulation\n", "  3) Display cost of one animal\n"
@@ -608,7 +591,7 @@ public class AnimalShelterManager {
 		}while(choice != 5);
 	}
 	
-	private static void yearSimulation(ExpenseReport current, Inventory[] items){
+	private static void yearSimulation(ExpenseReport current, List<Inventory> items){
 		final String TITLE = "Animal Shelter 12-Month Simulation";
 		final String ITEM_PROMPT = "Enter the expected percentage of merchandise to be sold:";
 		final String ANIMAL_PROMPT = "Enter the expected number of animals in the shelter for the year:";
@@ -632,11 +615,11 @@ public class AnimalShelterManager {
 		
 		for(int i = 0; i < Inventory.getMaxItemsCount(); i++){
 			if(i >= 0 && i <= 7){
-				averageAnimalExpense += items[i].getItemPurchaseCost();
-				averageAnimalProfit += items[i].getItemSellCost();
+				averageAnimalExpense += items.get(i).getItemPurchaseCost();
+				averageAnimalProfit += items.get(i).getItemSellCost();
 			}
-			inventoryAverageExpenses += items[i].getItemPurchaseCost();
-			inventoryAverageProfit += items[i].getItemSellCost();
+			inventoryAverageExpenses += items.get(i).getItemPurchaseCost();
+			inventoryAverageProfit += items.get(i).getItemSellCost();
 		}
 		
 		inventoryAverageExpenses = (inventoryAverageExpenses / Inventory.getMaxItemsCount());
@@ -706,7 +689,7 @@ public class AnimalShelterManager {
 		}
 	}
 	
-	private static void animalExpense(boolean multiple, Inventory[] items, List<Animal> animals){
+	private static void animalExpense(boolean multiple, List<Inventory> items, List<Animal> animals){
 		final String TITLE = "Animal Shelter Manager Menu";
 		String header = "Cost of ";
 		String animalType = "";
@@ -719,28 +702,17 @@ public class AnimalShelterManager {
 		animalChoice = animalMenu();
 		animalType = Animal.getAnimalTypes(animalChoice);
 		
-		switch(animalChoice){
-			case 0:
-				foodCost = ExpenseReport.calculateMonthlyExpense(items[0].getItemPurchaseCost(), ExpenseReport.getFoodMultiplier());
-				medicineCost =  ExpenseReport.calculateMonthlyExpense(items[1].getItemPurchaseCost(), ExpenseReport.getMedicineMultiplier());
-				animalCount = animalTypeCount(animals, animalChoice);
+		for(Inventory i : items){
+			if(i.getItemName().contains(animalType + " F")){
+				foodCost = (i.getItemPurchaseCost() * ExpenseReport.getFoodMultiplier());
+			}
+			if(i.getItemName().contains(animalType + " M")){
+				medicineCost = (i.getItemPurchaseCost() * ExpenseReport.getMedicineMultiplier());
 				break;
-			case 1:
-				foodCost = ExpenseReport.calculateMonthlyExpense(items[2].getItemPurchaseCost(), ExpenseReport.getFoodMultiplier());
-				medicineCost =  ExpenseReport.calculateMonthlyExpense(items[3].getItemPurchaseCost(), ExpenseReport.getMedicineMultiplier());
-				animalCount = animalTypeCount(animals, animalChoice);
-				break;
-			case 2:
-				foodCost = ExpenseReport.calculateMonthlyExpense(items[4].getItemPurchaseCost(), ExpenseReport.getFoodMultiplier());
-				medicineCost =  ExpenseReport.calculateMonthlyExpense(items[5].getItemPurchaseCost(), ExpenseReport.getMedicineMultiplier());
-				animalCount = animalTypeCount(animals, animalChoice);
-				break;
-			case 3:
-				foodCost = ExpenseReport.calculateMonthlyExpense(items[6].getItemPurchaseCost(), ExpenseReport.getFoodMultiplier());
-				medicineCost =  ExpenseReport.calculateMonthlyExpense(items[7].getItemPurchaseCost(), ExpenseReport.getMedicineMultiplier());
-				animalCount = animalTypeCount(animals, animalChoice);
-				break;
+			}
 		}
+		
+		animalCount = animalTypeCount(animals, animalChoice);
 		
 		if(multiple){
 			totalCost = ExpenseReport.calculateAnimalExpense(animalCount, foodCost, medicineCost);
@@ -785,7 +757,7 @@ public class AnimalShelterManager {
 		return choice - 1;
 	}
 	
-	private static int inventoryMenu(Inventory[] items){
+	private static int inventoryMenu(List<Inventory> items){
 		final String TITLE = "Animal Shelter Employee Menu";
 		final String PROMPT = "Select an item:\n";
 		final String[] PRODUCTS = {"Food", "Medicine", "Food Bowls", "Leashes", "Collars", "Toys"};
@@ -811,10 +783,9 @@ public class AnimalShelterManager {
 					}else{
 						item = PRODUCTS[choice - 1];
 					}
-					
-					for(int x = 0; x < Inventory.getMaxItemsCount(); x++){
-						if(items[x].getItemName().equals(item)){
-							choice = x;
+					for(Inventory i : items){
+						if(i.getItemName().equals(item)){
+							choice = items.indexOf(i);
 							break;
 						}
 					}
@@ -859,12 +830,14 @@ public class AnimalShelterManager {
 				//Finds the next semicolon and cuts the unnecessary parts to only have the last name.
 				divPosition = line.indexOf(';', lastInfoDiv);
 				persons[personIndex].setLastName(line.substring(lastInfoDiv, divPosition).trim());
+				//persons[personIndex].setLastName(line.substring(lastInfoDiv, divPosition).trim());
 				lastInfoDiv = line.indexOf(';', divPosition);
 				
 				if(persons[personIndex] instanceof Manager){
 					Manager currentManager = (Manager)persons[personIndex];
 					divPosition = line.indexOf(';', lastInfoDiv);
 					currentManager.setPassword(line.substring(divPosition + 1).trim());
+					
 				}
 				else if(persons[personIndex] instanceof Employee){
 					Employee currentEmployee = (Employee)persons[personIndex];
@@ -896,14 +869,13 @@ public class AnimalShelterManager {
 		}
 	}
 	
-	private static void readInventoryFile(Inventory[] items){
+	private static void readInventoryFile(List<Inventory> items){
 		//String for the title of all the messages for this method
 		final String TITLE = "Animal Shelter Manager";
 		//Variable to store the last position of the semicolon used for dividing attributes.
 		int lastInfoDiv;
 		//Variable to store the position where to start to search for the next element.
 		int divPosition;
-		int itemIndex = 0;
 		
 		//Try and catch to prevent the program from crashing if the file is missing or other I/O errors.
 		try{
@@ -914,27 +886,28 @@ public class AnimalShelterManager {
 			while(reader.hasNextLine()){
 				lastInfoDiv = 0;
 				divPosition = 0;
+				Inventory temp = new Inventory();
 				//String to hold a line from the file.
 				String line = reader.nextLine();
 						
 				//Finds the first semicolon and cuts the unnecessary parts to only have the first name.
 				divPosition = line.indexOf(';') + lastInfoDiv;
-				items[itemIndex].setItemName(line.substring(lastInfoDiv, divPosition).trim());
+				temp.setItemName(line.substring(lastInfoDiv, divPosition).trim());
 				lastInfoDiv = line.indexOf(';') + 1;
 
 				//Finds the next semicolon and cuts the unnecessary parts to only have the last name.
 				divPosition = line.indexOf(';', lastInfoDiv);
-				items[itemIndex].setItemPurchasePrice(((Double.parseDouble(line.substring(lastInfoDiv, divPosition).trim()))));
+				temp.setItemPurchasePrice(((Double.parseDouble(line.substring(lastInfoDiv, divPosition).trim()))));
 				lastInfoDiv = line.indexOf(';', divPosition) + 1;
 				
 				divPosition = line.indexOf(';', lastInfoDiv);
-				items[itemIndex].setItemSellPrice(((Double.parseDouble(line.substring(lastInfoDiv, divPosition).trim()))));
+				temp.setItemSellPrice(((Double.parseDouble(line.substring(lastInfoDiv, divPosition).trim()))));
 				lastInfoDiv = line.indexOf(';', divPosition);
 				
 				divPosition = line.indexOf(';', lastInfoDiv);
-				items[itemIndex].setItemCount(((Integer.parseInt(line.substring(divPosition + 1).trim()))));
-				Inventory.setInventoryCount(items[itemIndex].getItemCount());
-				itemIndex++;
+				temp.setItemCount(((Integer.parseInt(line.substring(divPosition + 1).trim()))));
+				Inventory.setInventoryCount(temp.getItemCount());
+				items.add(temp);
 			}
 			//After reading the file close the Scanner object.
 			reader.close();
@@ -995,7 +968,6 @@ public class AnimalShelterManager {
 		try{
 			if(persons[firstIndex] instanceof Manager){
 				writer = new PrintWriter(new FileOutputStream(Manager.fileLocation()));
-				writer.println(persons);
 				
 				for(int x = 0; x < Manager.getMaxManagers(); x++){
 					Manager currentManager = (Manager)persons[x];
@@ -1042,15 +1014,15 @@ public class AnimalShelterManager {
 		}
 	}
 	
-	private static void writeInventoryToFile(Inventory[] items){
+	private static void writeInventoryToFile(List<Inventory> items){
 		final String TITLE = "Animal Shelter Menu";
 		PrintWriter writer = null;
 		
 		try{
 			writer = new PrintWriter(new FileOutputStream(Inventory.fileLocation()));
 			
-			for(int x = 0; x < Inventory.getMaxItemsCount(); x++){
-				writer.println(items[x].toFile());
+			for(Inventory i : items){
+				writer.println(i.toFile());
 			}
 			
 			writer.close();

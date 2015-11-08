@@ -56,10 +56,18 @@ public class ExpenseReport {
 		return this.monthProfit;
 	}
 	
+	/**
+	 * Accessot method to return the multiplier used for calculating food expenses.
+	 * @return
+	 */
 	public static int getFoodMultiplier(){
 		return FOOD_MULTIPLY;
 	}
 	
+	/**
+	 * Accessot method to return the multiplier used for calculating medicine expenses.
+	 * @return
+	 */
 	public static int getMedicineMultiplier(){
 		return  MEDICINE_MULTIPLY;
 	}
@@ -98,14 +106,6 @@ public class ExpenseReport {
 	 */
 	public void setMonthExpense(double expense){
 		this.monthExpense += expense;
-	}
-	
-	public static double calculateMonthlyExpense(double expense, int multiplier){
-		double monthlyExpense = 0;
-		
-		monthlyExpense = expense * multiplier;
-		
-		return monthlyExpense;
 	}
 	
 	/**

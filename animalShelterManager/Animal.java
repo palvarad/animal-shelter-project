@@ -71,7 +71,7 @@ public class Animal {
 	}
 	
 	/**
-	 * Accessor method to return the animal type using from the array.
+	 * Accessor method to return the animal type from the array.
 	 * @return
 	 */
 	public static String getAnimalTypes(int index){

@@ -1,4 +1,4 @@
-Dog Food ; 20.0 ; 35.0 ; 15
+Dog Food ; 20.0 ; 35.0 ; 14
 Dog Medicine ; 15.0 ; 25.0 ; 15
 Cat Food ; 15.0 ; 25.0 ; 13
 Cat Medicine ; 10.0 ; 20.0 ; 15
