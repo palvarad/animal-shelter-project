@@ -107,9 +107,6 @@ public class Animal {
 		//If the name is not blank then the name is stored and a true is return.
 		else{
 			this.animalType = type;
-			if(this.animalID.equals("")){
-				this.animalID = createAnimalID(this.animalType);
-			}
 		}
 	}
 	
@@ -149,10 +146,9 @@ public class Animal {
 	 * @param typeToCreate
 	 * @return String newID
 	 */
-	private static String createAnimalID(String typeToCreate){
+	public static String createAnimalID(String typeToCreate){
 		String newID = "";
 		animalCount++;
-		animalHistory++;
 		
 		for(int x = 0; x < ANIMAL_TYPES.length; x++ ){
 			if(typeToCreate.equals(getAnimalTypes(x))){

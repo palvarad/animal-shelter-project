@@ -1,10 +1,13 @@
-D1001 ; Dog
 R1002 ; Rodent
 D1003 ; Dog
 R1004 ; Rodent
-B1005 ; Bird
 B1007 ; Bird
 R1008 ; Rodent
 D1009 ; Dog
 C1010 ; Cat
 R1011 ; Rodent
+B1012 ; Bird
+C1013 ; Cat
+B1014 ; Bird
+D1015 ; Dog
+D1016 ; Dog
