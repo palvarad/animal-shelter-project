@@ -14,8 +14,6 @@ public class Customer extends ShelterPerson{
 	static final int MAX_PHONE_LENGTH = 12;
 	//Variables to store the position of the dashes in the phone number for validation.
 	static final int PHONE_LEFT_DASH = 3, PHONE_RIGHT_DASH = 7;
-	//Variable to store the customer count.
-	static int customerCount = 0;
 	//Array of the animals the customer has adopted.
 	private String[] animalsAdopted;
 	//Variable to store the phone number of the customer.
@@ -76,14 +74,6 @@ public class Customer extends ShelterPerson{
 	}
 	
 	/**
-	 * Accessor method to return the max number of animals a customer can adopt.
-	 * @return
-	 */
-	public static int getCustomerCount(){
-		return customerCount;
-	}
-	
-	/**
 	 * Mutator method to change the number of animals the customer has adopted.
 	 * @param count
 	 */
@@ -98,14 +88,6 @@ public class Customer extends ShelterPerson{
 	public void setPhoneNumber(String phone){
 		//If all the checks passed then the phone number is set.
 		this.phoneNumber = phone;
-	}
-	
-	/**
-	 * Mutator method to set the customer count.
-	 * @param customers
-	 */
-	public static void setCustomerCount(int customers){
-		customerCount += customers;
 	}
 	
 	/**

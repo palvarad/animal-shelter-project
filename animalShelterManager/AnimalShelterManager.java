@@ -15,33 +15,18 @@ public class AnimalShelterManager {
 		final String LOGIN_PROMPT = "Select User Type:";
 		int choice = 0, terminate = 0;
 		
-		//Arrays to store the different person objects.
-		ShelterPerson[] shelterManager = new Manager[Manager.getMaxManagers()];
-		//Loop to initialize all objects inside the array to avoid errors.
-		for(int x = 0; x < Manager.getMaxManagers(); x++){
-			shelterManager[x] = new Manager();
-		}
-		
-		ShelterPerson[] shelterEmployees = new Employee[Employee.getMaxEmployees()];
-		//Loop to initialize all objects inside the array to avoid errors.
-		for(int x = 0; x < Employee.getMaxEmployees(); x++){
-			shelterEmployees[x] = new Employee();
-		}
-		
-		ShelterPerson[] shelterCustomers = new Customer[10];
-		for(int x = 0; x < 10; x++){
-			shelterCustomers[x] = new Customer();
-		}
-		
+		List<ShelterPerson> shelterManager = new ArrayList<ShelterPerson>();
+		List<ShelterPerson> shelterEmployees = new ArrayList<ShelterPerson>();
+		List<ShelterPerson> shelterCustomers = new ArrayList<ShelterPerson>();
 		List<Animal> shelterAnimals = new ArrayList<Animal>();
 		List<Inventory> shelterInventory = new ArrayList<Inventory>();
 		
 		ExpenseReport currentExpenses = new ExpenseReport("Current Report", 0, 0);
 		
 		//Method call that reads the file. The array and file path are passed.
-		readPersonFile(shelterManager, Manager.fileLocation());
-		readPersonFile(shelterEmployees, Employee.fileLocation());
-		readPersonFile(shelterCustomers, Customer.fileLocation());
+		readPersonFile(shelterManager, Manager.fileLocation(), 0);
+		readPersonFile(shelterEmployees, Employee.fileLocation(), 1);
+		readPersonFile(shelterCustomers, Customer.fileLocation(), 2);
 		readInventoryFile(shelterInventory);
 		readAnimalFile(shelterAnimals);
 		Animal.setAnimalHistory(Animal.getAnimalCount() + Animal.getAnimalHistory());
@@ -51,7 +36,7 @@ public class AnimalShelterManager {
 			
 			if(choice == 0){
 				try{
-					Manager currentManager = (Manager)shelterManager[0];
+					Manager currentManager = (Manager)shelterManager.get(0);
 					currentManager.validatePassword(JOptionPane.showInputDialog(null, "Enter the manager password:", TITLE, JOptionPane.QUESTION_MESSAGE));
 					terminate = managerMenu(shelterInventory, shelterAnimals, shelterEmployees, currentExpenses);
 					
@@ -71,7 +56,7 @@ public class AnimalShelterManager {
 		}while(terminate != -1);
 	}
 	
-	private static int managerMenu(List<Inventory> items, List<Animal> animals, ShelterPerson[] employees, ExpenseReport current){
+	private static int managerMenu(List<Inventory> items, List<Animal> animals, List<ShelterPerson> employees, ExpenseReport current){
 		final String TITLE = "Animal Shelter Manager Menu";
 		final String PROMPT = "Select an option from the menu:\n";
 		final String[] OPTIONS = {"  1) Check Inventory\n", "  2) Order Supplies\n",
@@ -118,7 +103,7 @@ public class AnimalShelterManager {
 		return terminationChoice;
 	}
 	
-	private static void employeeMenu(ShelterPerson[] customers, List<Inventory> items, List<Animal> animals, ExpenseReport current){
+	private static void employeeMenu(List<ShelterPerson> customers, List<Inventory> items, List<Animal> animals, ExpenseReport current){
 		final String TITLE = "Animal Shelter Employee Menu";
 		final String PROMPT = "Select an option from the menu:\n";
 		final String[] OPTIONS = {"  1) Adopt an animal\n", "  2) Add an animal\n",
@@ -158,12 +143,11 @@ public class AnimalShelterManager {
 		}while(employeeChoice != 5);
 	}
 	
-	private static void animalAdoption(ShelterPerson[] customers, List<Animal> animals,  List<Inventory> items, ExpenseReport current){
+	private static void animalAdoption(List<ShelterPerson> customers, List<Animal> animals,  List<Inventory> items, ExpenseReport current){
 		final String TITLE = "Animal Shelter Adooption Menu";
 		int foundIndex = 0;
 		String phoneNum = "";
 		boolean customerFound = false;
-		Customer tempCustomer = null;
 		boolean valid = true;
 		
 		do{
@@ -171,25 +155,24 @@ public class AnimalShelterManager {
 				valid = true;	
 				phoneNum = JOptionPane.showInputDialog(null, "Enter the customer's phone number:", TITLE, JOptionPane.QUESTION_MESSAGE);
 				Customer.validatePhoneNumber(phoneNum);
-			
-				for(int x = 0; x < customers.length; x++){
-					if(customers[x] instanceof Customer){
-						tempCustomer = (Customer)customers[x];
-					
-						if(tempCustomer.getPhoneNumber().equals(phoneNum)){
-							foundIndex = x;
+				
+				for(ShelterPerson c : customers){
+					if(c instanceof Customer){
+						if(((Customer)c).getPhoneNumber().equals(phoneNum)){
+							foundIndex = customers.indexOf(c);
 							customerFound = true;
 						}
 					}
 				}
+				
 				if(customerFound){
-					JOptionPane.showMessageDialog(null, "Welcome Back " + customers[foundIndex].getFirstName() + "!");
-					adoptAnimal((Customer)customers[foundIndex], animals, items, current);
+					JOptionPane.showMessageDialog(null, "Welcome Back " + customers.get(foundIndex).getFirstName() + "!");
+					adoptAnimal((Customer)customers.get(foundIndex), animals, items, current);
 				}
 				else if(!customerFound){
 					JOptionPane.showMessageDialog(null, "Customer information not found.\n A new account must be created.");
-					createNewCustomer((Customer)customers[Customer.getCustomerCount()], phoneNum);
-					adoptAnimal((Customer)customers[Customer.getCustomerCount() - 1], animals, items, current);
+					createNewCustomer(customers, phoneNum);
+					adoptAnimal((Customer)customers.get(foundIndex), animals, items, current);
 				}
 			
 				writeShelterPersonToFile(customers);
@@ -200,24 +183,23 @@ public class AnimalShelterManager {
 		}while(!valid);
 	}
 	
-	private static void createNewCustomer(Customer newCustomer, String phone){
+	private static void createNewCustomer(List<ShelterPerson> customers, String phone){
 		final String TITLE = "Animal Shelter Adooption Menu", FNAME_PROMPT = "Enter the customer's first name:",
 						LNAME_PROMPT = "Enter the customer's last name:";
-		final int INCREASE_COUNT = 1;
 		boolean valid = true;
 		int promptLevel = 0;
+		customers.add(new Customer());
 		
 		do{
 			valid = true;
 			try{
-				newCustomer.setPhoneNumber(phone);
+				((Customer)customers.get(customers.size()-1)).setPhoneNumber(phone);
 				if(promptLevel == 0){
-					newCustomer.setFirstName(JOptionPane.showInputDialog(null, FNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
+					((Customer)customers.get(customers.size()-1)).setFirstName(JOptionPane.showInputDialog(null, FNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
 					promptLevel = 1;
 				}
 				if(promptLevel == 1){
-					newCustomer.setLastName(JOptionPane.showInputDialog(null, LNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
-					Customer.setCustomerCount(INCREASE_COUNT);
+					((Customer)customers.get(customers.size()-1)).setLastName(JOptionPane.showInputDialog(null, LNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
 				}
 				
 			}catch(IllegalArgumentException e){
@@ -420,7 +402,7 @@ public class AnimalShelterManager {
 		current.setMonthExpense(total);
 	}
 	
-	private static void employeeManagement(ShelterPerson[] employees){
+	private static void employeeManagement(List<ShelterPerson> employees){
 		final String TITLE = "Animal Shelter Manager Menu";
 		final String PROMPT = "Select an option from the menu:\n";
 		final String[] OPTIONS = {"  1) List Employees\n", "  2) Add Employee\n",
@@ -444,7 +426,7 @@ public class AnimalShelterManager {
 							JOptionPane.showMessageDialog(null, MAX_EMPLOYEES, TITLE, JOptionPane.ERROR_MESSAGE);
 						}
 						else{
-							addEmployee((Employee)employees[Employee.getEmployeeCount()]);
+							addEmployee(employees);
 						}
 						break;
 					case 3:
@@ -462,7 +444,7 @@ public class AnimalShelterManager {
 		}while(choice != 4);
 	}
 	
-	private static void displayEmployees(ShelterPerson[] employees){
+	private static void displayEmployees(List<ShelterPerson> employees){
 		final String TITLE = "Animal Shelter Manager Menu";
 		String employeeList = "List of Employees:\n";
 		
@@ -470,10 +452,9 @@ public class AnimalShelterManager {
 			employeeList = "There are no employees.";
 		}
 		else{
-			for(int i = 0; i < Employee.getEmployeeCount(); i++){
-				if(employees[i] instanceof Employee){
-					Employee tempEmployee = (Employee)employees[i];
-					employeeList += "  " + "- " + tempEmployee.toString() + "\n"; 
+			for(ShelterPerson e : employees){
+				if(e instanceof Employee){
+					employeeList += "  " + "- " + ((Employee)e).toString() + "\n"; 
 				}
 			}
 		}
@@ -481,29 +462,30 @@ public class AnimalShelterManager {
 		JOptionPane.showMessageDialog(null, employeeList, TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	private static void addEmployee(Employee newEmployee){
+	private static void addEmployee(List<ShelterPerson> employees){
 		final String TITLE = "Animal Shelter Manager Menu";
 		final String FNAME_PROMPT = "Enter the new employee's first name:";
 		final String LNAME_PROMPT = "Enter the new employee's last name:";
 		final String ID_PROMPT = "Enter the ID of the new employee:";
-		final int INCREASE_COUNT = 1;
+		final int INCREASE_COUNT = 1, EMPLOYEE_COUNT = Employee.getEmployeeCount();
 		boolean valid = true;
 		int promptLevel = 0;
+		employees.add(new Employee());
 		
 		do{
 			valid = true;
 			try{
 				if(promptLevel == 0){
-					newEmployee.setFirstName(JOptionPane.showInputDialog(null, FNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
+					employees.get(EMPLOYEE_COUNT).setFirstName(JOptionPane.showInputDialog(null, FNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
 					promptLevel = 1;
 				}
 				if(promptLevel == 1){
-					newEmployee.setLastName(JOptionPane.showInputDialog(null, LNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
+					employees.get(EMPLOYEE_COUNT).setLastName(JOptionPane.showInputDialog(null, LNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
 					promptLevel = 2;
 				}
 				if(promptLevel == 2){
-					newEmployee.setEmployeeId(JOptionPane.showInputDialog(null, ID_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
-					Employee.setEmployeeCount(Employee.getEmployeeCount() + INCREASE_COUNT);
+					((Employee)employees.get(EMPLOYEE_COUNT)).setEmployeeId(JOptionPane.showInputDialog(null, ID_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
+					Employee.setEmployeeCount(EMPLOYEE_COUNT + INCREASE_COUNT);
 				}
 			}catch(IllegalArgumentException e){
 				JOptionPane.showMessageDialog(null, e.getMessage(), TITLE, JOptionPane.ERROR_MESSAGE);
@@ -512,48 +494,50 @@ public class AnimalShelterManager {
 		}while(!valid);
 	}
 	
-	private static void removeEmployee(ShelterPerson[] employees){
+	private static void removeEmployee(List<ShelterPerson> employees){
 		final String TITLE = "Animal Shelter Manager Menu";
 		final String ERROR_NFE = "Please enter a number to select an option.";
 		final String ERROR_MENU = "Please select an option from the menu.";
 		String employeeList = "Select an employee to remove:\n";
-		int removeThis = 0;
-		
+		int removeThis = 0, counter = 0;
+		boolean valid = true;
 		if(Employee.getEmployeeCount() == 0){
 			employeeList = "There are no employees.";
 		}
 		else{
-			for(int i = 0; i < Employee.getEmployeeCount(); i++){
-				if(employees[i] instanceof Employee){
-					Employee tempEmployee = (Employee)employees[i];
-					employeeList += "  " + (i+1) + ") " + tempEmployee.getFirstName() + " " + tempEmployee.getLastName() +"\n"; 
+			for(ShelterPerson e : employees){
+				if(e instanceof Employee){
+					employeeList += "  " + (counter+1) + ") " + e.getFirstName() + " " + e.getLastName() +"\n";
 				}
+				counter++;
 			}
-			employeeList += "  " + (Employee.getEmployeeCount() + 1) + ") Exit";
-			
-			try{
-				removeThis = Integer.parseInt(JOptionPane.showInputDialog(null, employeeList, TITLE, JOptionPane.INFORMATION_MESSAGE));
+			counter++;
+			employeeList += "  " + (counter) + ") Exit";
+			do{
+				try{
+					removeThis = Integer.parseInt(JOptionPane.showInputDialog(null, employeeList, TITLE, JOptionPane.INFORMATION_MESSAGE));
 				
-				if(removeThis < 0 || removeThis > Employee.getEmployeeCount()){
-					JOptionPane.showMessageDialog(null, ERROR_MENU, TITLE, JOptionPane.ERROR_MESSAGE);
-				}
-				else{
-					employees[removeThis-1] = new Employee();
-					Employee.setEmployeeCount(Employee.getEmployeeCount() - 1);
-					
-					for(int x = removeThis - 1; x < Employee.getEmployeeCount(); x++){
-						employees[x] = employees[x+1];
+					if(removeThis > 0 && removeThis <= Employee.getEmployeeCount()){
+						employees.remove(removeThis - 1);
+						JOptionPane.showMessageDialog(null, "Employee List Updated!", TITLE, JOptionPane.INFORMATION_MESSAGE);
+						Employee.setEmployeeCount(Employee.getEmployeeCount() - 1);
+						valid = true;
 					}
+					else if(removeThis == counter){
+						valid = true;
+					}
+					else{
+						JOptionPane.showMessageDialog(null, ERROR_MENU, TITLE, JOptionPane.ERROR_MESSAGE);
+						valid = false;
+					}
+				}catch(NumberFormatException e){
+					JOptionPane.showMessageDialog(null, ERROR_NFE, TITLE, JOptionPane.ERROR_MESSAGE);
 				}
-				
-				JOptionPane.showMessageDialog(null, "Employee List Updated!", TITLE, JOptionPane.INFORMATION_MESSAGE);
-			}catch(NumberFormatException e){
-				JOptionPane.showMessageDialog(null, ERROR_NFE, TITLE, JOptionPane.ERROR_MESSAGE);
-			}
+			}while(!valid);
 		}
 	}
 	
-	private static void expenseManagement(List<Inventory> items, List<Animal> animals, ShelterPerson[] employees, ExpenseReport current){
+	private static void expenseManagement(List<Inventory> items, List<Animal> animals, List<ShelterPerson> employees, ExpenseReport current){
 		final String TITLE = "Animal Shelter Expense Menu";
 		final String PROMPT = "Select an option from the menu:\n";
 		final String[] OPTIONS = {"  1) Display current report\n", "  2) Display 12 month simulation\n", "  3) Display cost of one animal\n"
@@ -799,7 +783,7 @@ public class AnimalShelterManager {
 		return choice;
 	}
 	
-	private static void readPersonFile(ShelterPerson[] persons, String filePath){
+	private static void readPersonFile(List<ShelterPerson> persons, String filePath, int type){
 		//String for the title of all the messages for this method
 		final String TITLE = "Animal Shelter Manager";
 		//Variable to keep track of which line is added to which object in the array.
@@ -808,7 +792,6 @@ public class AnimalShelterManager {
 		int lastInfoDiv;
 		//Variable to store the position where to start to search for the next element.
 		int divPosition;
-		
 		//Try and catch to prevent the program from crashing if the file is missing or other I/O errors.
 		try{
 			//Scanner object to read the file information
@@ -816,6 +799,15 @@ public class AnimalShelterManager {
 			
 			//While loop to iterate until there are no more lines to read from the file.
 			while(reader.hasNextLine()){
+				if(type == 0){
+					persons.add(new Manager());
+				}
+				else if(type == 1){
+					persons.add(new Employee());
+				}
+				else if(type == 2){
+					persons.add(new Customer());
+				}
 				lastInfoDiv = 0;
 				divPosition = 0;
 				//String to hold a line from the file.
@@ -823,38 +815,32 @@ public class AnimalShelterManager {
 				
 				//Finds the first semicolon and cuts the unnecessary parts to only have the first name.
 				divPosition = line.indexOf(';') + lastInfoDiv;
-				persons[personIndex].setFirstName(line.substring(lastInfoDiv, divPosition).trim());
+				persons.get(personIndex).setFirstName(line.substring(lastInfoDiv, divPosition).trim());
 				lastInfoDiv = line.indexOf(';') + 1;
 
 				//Finds the next semicolon and cuts the unnecessary parts to only have the last name.
 				divPosition = line.indexOf(';', lastInfoDiv);
-				persons[personIndex].setLastName(line.substring(lastInfoDiv, divPosition).trim());
-				//persons[personIndex].setLastName(line.substring(lastInfoDiv, divPosition).trim());
+				persons.get(personIndex).setLastName(line.substring(lastInfoDiv, divPosition).trim());
 				lastInfoDiv = line.indexOf(';', divPosition);
 				
-				if(persons[personIndex] instanceof Manager){
-					Manager currentManager = (Manager)persons[personIndex];
+				if(persons.get(personIndex) instanceof Manager){
 					divPosition = line.indexOf(';', lastInfoDiv);
-					currentManager.setPassword(line.substring(divPosition + 1).trim());
-					
+					((Manager)persons.get(personIndex)).setPassword(line.substring(divPosition + 1).trim());
 				}
-				else if(persons[personIndex] instanceof Employee){
-					Employee currentEmployee = (Employee)persons[personIndex];
+				else if(persons.get(personIndex)instanceof Employee){
 					divPosition = line.indexOf(';', lastInfoDiv);
-					currentEmployee.setEmployeeId(line.substring(divPosition + 1).trim());
+					((Employee)persons.get(personIndex)).setEmployeeId(line.substring(divPosition + 1).trim());
 					Employee.setEmployeeCount(personIndex + 1);
 				}
-				else if(persons[personIndex] instanceof Customer){
-					Customer currentCustomer = (Customer)persons[personIndex];
+				else if(persons.get(personIndex) instanceof Customer){
 					divPosition = line.indexOf(';', lastInfoDiv);
 					lastInfoDiv = line.indexOf(';', divPosition + 1);
-					currentCustomer.setPhoneNumber(line.substring(divPosition + 1, lastInfoDiv).trim());
-					Customer.setCustomerCount(1);
+					((Customer)persons.get(personIndex)).setPhoneNumber(line.substring(divPosition + 1, lastInfoDiv).trim());
 					
 					while(line.lastIndexOf(';') != lastInfoDiv){
 						divPosition = line.indexOf(';', lastInfoDiv);
 						lastInfoDiv = line.indexOf(';', divPosition + 1);
-						currentCustomer.setAdoption(line.substring(divPosition + 1, lastInfoDiv).trim());
+						((Customer)persons.get(personIndex)).setAdoption(line.substring(divPosition + 1, lastInfoDiv).trim());
 						Animal.setAnimalHistory(Animal.getAnimalHistory() + 1);
 					}
 				}
@@ -959,34 +945,30 @@ public class AnimalShelterManager {
 			}
 	}
 	
-	private static void writeShelterPersonToFile(ShelterPerson[] persons){
+	private static void writeShelterPersonToFile(List<ShelterPerson> persons){
 		final String TITLE = "Animal Shelter Menu";
 		PrintWriter writer = null;
 		int firstIndex = 0;
 		
 		try{
-			if(persons[firstIndex] instanceof Manager){
+			if(persons.get(firstIndex) instanceof Manager){
 				writer = new PrintWriter(new FileOutputStream(Manager.fileLocation()));
-				
-				for(int x = 0; x < Manager.getMaxManagers(); x++){
-					Manager currentManager = (Manager)persons[x];
-					writer.println(currentManager.toFile());
-				}	
-			}
-			else if(persons[firstIndex] instanceof Employee){
-				writer = new PrintWriter(new FileOutputStream(Employee.fileLocation()));
-				
-				for(int x = 0; x < Employee.getEmployeeCount(); x++){
-					Employee currentEmployee = (Employee)persons[x];
-					writer.println(currentEmployee.toFile());
+				for(ShelterPerson m : persons){
+					writer.println(((Manager)m).toFile());
 				}
 			}
-			else if(persons[firstIndex] instanceof Customer){
+			else if(persons.get(firstIndex) instanceof Employee){
+				writer = new PrintWriter(new FileOutputStream(Employee.fileLocation()));
+				
+				for(ShelterPerson e : persons){
+					writer.println(((Employee)e).toFile());
+				}
+			}
+			else if(persons.get(firstIndex) instanceof Customer){
 				writer = new PrintWriter(new FileOutputStream(Customer.fileLocation()));
 				
-				for(int x = 0; x < Customer.getCustomerCount(); x++){
-					Customer currentCustomer = (Customer)persons[x];
-					writer.println(currentCustomer.toFile());
+				for(ShelterPerson e : persons){
+					writer.println(((Customer)e).toFile());
 				}
 			}
 			
