@@ -198,6 +198,10 @@ public class AnimalShelterManager {
 		current.setMonthExpense(total);
 	}
 	
+	/**
+	 * Method to display a menu with the options available to the manager about employees.
+	 * @param employees
+	 */
 	private static void employeeManagement(List<ShelterPerson> employees){
 		final String TITLE = "Animal Shelter Manager Menu";
 		final String PROMPT = "Select an option from the menu:\n";
@@ -240,6 +244,13 @@ public class AnimalShelterManager {
 		}while(choice != 4);
 	}
 	
+	/**
+	 * Method to display a menu with the options available to the manager about expenses. 
+	 * @param items
+	 * @param animals
+	 * @param employees
+	 * @param current
+	 */
 	private static void expenseManagement(List<Inventory> items, List<Animal> animals, List<ShelterPerson> employees, ExpenseReport current){
 		final String TITLE = "Animal Shelter Expense Menu";
 		final String PROMPT = "Select an option from the menu:\n";

@@ -81,6 +81,7 @@ public class Customer extends ShelterPerson{
 		this.animalsAdopted[this.getAdoptionCount()] = adoptedAnimal;
 		this.adoptionCount++;
 	}
+	
 	/**
 	 * Mutator mehtod to set the customer's phone number.
 	 * @param phone
@@ -119,7 +120,7 @@ public class Customer extends ShelterPerson{
 				}
 				//If any of the positions where a number should be is not a number then this exception is thrown.
 				if(!Character.isDigit((phone.charAt(x)))){
-					throw new IllegalArgumentException("One or more of the characters in the phone number entered is not a valid number.");
+					throw new IllegalArgumentException("One or more of the characters in the phone number are not a valid number.");
 				}
 			}
 		}
