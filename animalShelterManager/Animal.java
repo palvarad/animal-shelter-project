@@ -16,8 +16,6 @@ public class Animal {
 	private static final String[] ANIMAL_TYPES = {"Dog", "Cat","Rodent", "Bird"};
 	//variables to store the initial letter associated for each type to be used for the ID
 	private static Character[] ANIMAL_INITS = {'D', 'C', 'R', 'B'};
-	//Variable to store the total number of animals that have been in the shelter.
-	private static int animalCount;
 	//Variable to store the total number of animals that have ever been in the shelter.
 	private static int animalHistory;
 	//Variable to store the animal type
@@ -116,17 +114,7 @@ public class Animal {
 	 * @return String animalID
 	 */
 	public static String animalAdopted(Animal adopted){
-		animalCount--;
-		
 		return adopted.getAnimalID();
-	}
-	
-	/**
-	 * Accessor method to return the number of animals currently in the shelter.
-	 * @return int animalCount
-	 */
-	public static int getAnimalCount(){
-		return animalCount;
 	}
 	
 	public void setAnimalID(String id){
@@ -148,7 +136,6 @@ public class Animal {
 	 */
 	public static String createAnimalID(String typeToCreate){
 		String newID = "";
-		animalCount++;
 		
 		for(int x = 0; x < ANIMAL_TYPES.length; x++ ){
 			if(typeToCreate.equals(getAnimalTypes(x))){
@@ -158,14 +145,6 @@ public class Animal {
 		}
 		
 		return newID;
-	}
-	
-	/**
-	 * Mutator method to set the number of animals currently in the shelter.
-	 * @param int count
-	 */
-	public static void setAnimalCount(int count){
-		animalCount = count;
 	}
 	
 	/**
