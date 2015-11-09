@@ -124,6 +124,12 @@ public class AnimalShelterManager {
 		return terminationChoice;
 	}
 	
+	/**
+	 * Method to display the current inventory to the manager. A for loop goes through all the elements
+	 * inside the Inventory array list and gets the name and count of each to be put in a String. Finally,
+	 * the a message is displayed with the name and count of all the items in the animal shelter. 
+	 * @param items
+	 */
 	private static void checkInventory(List<Inventory> items){
 		final String TITLE = "Animal Shelter Inventory Menu";
 		String header = "Inventory Screen:\n";
@@ -138,7 +144,14 @@ public class AnimalShelterManager {
 		JOptionPane.showMessageDialog(null, header + inventoryPrint + total + max, TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
+	/**
+	 * Method to allow the manager to order supplies. 
+	 * @param items
+	 * @param current
+	 */
 	private static void orderSupplies(List<Inventory> items, ExpenseReport current){
+		//TODO Compare with purchase item and maybe only use 1 method to handle the order/purchasing of items.
+		//Main differences are the methods use different prices and one adds to the inventory and the other subtracts.
 		final String TITLE = "Animal Shelter Purchase Menu";
 		int purchaseCount = 0, buyMore = 0, item = 0;
 		String receipt = "", quantityPrompt = "", morePurchasesPrompt = "Would you like to make another purchase?", header = "";
