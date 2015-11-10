@@ -5,7 +5,7 @@ package animalShelterManager;
  * include the first and last name (inherit from ShleterPerson), phone number, and the animals they have adopted.
  * The customer will be purchasing goods and adopting animals from the shelter. 
  */
-public class Customer extends ShelterPerson{
+public class Customer extends ShelterPerson implements Comparable<Object>{
 	//Variable to store the location of the manager file.
 	static final private String FILE_LOCATION = "./src/customerFile.txt";
 	//Variable to store the max number of animals a customer can adopt.
@@ -83,21 +83,12 @@ public class Customer extends ShelterPerson{
 	}
 	
 	/**
-	 * Mutator mehtod to set the customer's phone number.
-	 * @param phone
-	 */
-	public void setPhoneNumber(String phone){
-		//If all the checks passed then the phone number is set.
-		this.phoneNumber = phone;
-	}
-	
-	/**
 	 * Mutator method to set the phone number of the customer. If the phone number is blank an exception is thrown.
 	 * If the phone number is the incorrect format(Ex.703-993-1000) an exception is thrown.
 	 * @param String fName
 	 * @return boolean
 	 */
-	public static void validatePhoneNumber(String phone){
+	public void setPhoneNumber(String phone){
 		//If the phone number is blank then an exception is thrown to inform the user.
 		if(phone.trim().equals("")){
 			throw new IllegalArgumentException("The phone number cannot be blank");
@@ -123,6 +114,25 @@ public class Customer extends ShelterPerson{
 					throw new IllegalArgumentException("One or more of the characters in the phone number are not a valid number.");
 				}
 			}
+			this.phoneNumber = phone;
+		}
+	}
+	
+	/**
+	 * Special purpose method to compare the phone number of a newly created customer with an old customer
+	 * to avoid the same customer having multiple accounts.
+	 * @return -2: invalid. 0: equal. -1: not equal.
+	 */
+	public int compareTo(Object o){
+		if(!(o instanceof Customer)){
+			return -2;
+		}
+		Customer cust = (Customer)o;
+		if(cust.getPhoneNumber().equals(this.getPhoneNumber())){
+			return 0;
+		}
+		else{
+			return -1;
 		}
 	}
 	

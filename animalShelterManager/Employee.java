@@ -5,7 +5,7 @@ package animalShelterManager;
  * include the first and last name (inherit from ShelterPerosn), and employee ID. The employee will be 
  * assisting customer that want to adopt an animal and purchase from the shelter. 
  */
-public class Employee extends ShelterPerson{
+public class Employee extends ShelterPerson implements Comparable<Object>{
 	//Variable to store the location of the manager file.
 	static final private String FILE_LOCATION = "./src/employeeFile.txt";
 	//Variable to store the max number of employees that can work at the animal shelter.
@@ -96,6 +96,24 @@ public class Employee extends ShelterPerson{
 				}
 			}
 			this.employeeID = id;
+		}
+	}
+	
+	/**
+	 * Special purpose method to compare the id of a newly created employee with an old employee
+	 * to avoid two employees with the same id.
+	 * @return -2: invalid. 0: equal. -1: not equal.
+	 */
+	public int compareTo(Object o){
+		if(!(o instanceof Employee)){
+			return -2;
+		}
+		Employee emp = (Employee)o;
+		if(emp.getEmployeeID().equals(this.getEmployeeID())){
+			return 0;
+		}
+		else{
+			return -1;
 		}
 	}
 	
