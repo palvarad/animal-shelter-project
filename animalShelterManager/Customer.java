@@ -1,3 +1,11 @@
+/**
+ * Group: MachineWork
+ * Group Members: Larry Hong and Peter Alvarado Nunez.
+ * Group Leader: Larry Hong
+ * Date: 11-11-2015
+ * Course: IT 306 - 001
+ * Project Phase V - Preliminary System Implementation
+ */
 package animalShelterManager;
 
 /**
@@ -114,6 +122,7 @@ public class Customer extends ShelterPerson implements Comparable<Object>{
 					throw new IllegalArgumentException("One or more of the characters in the phone number are not a valid number.");
 				}
 			}
+			//If the phone number is valid then the phone number is stored.
 			this.phoneNumber = phone;
 		}
 	}
@@ -140,8 +149,8 @@ public class Customer extends ShelterPerson implements Comparable<Object>{
 	 * Special purpose method to add the ID of the animal the customer wants to adopt to the list of adopted animals.
 	 * @param adopt
 	 */
-	public void adoptAnimal(Animal adopt){
-		animalsAdopted[adoptionCount] = Animal.animalAdopted(adopt);
+	public void adoptAnimal(Animal adopted){
+		animalsAdopted[adoptionCount] = adopted.getAnimalID();
 		this.adoptionCount++;
 	}
 	

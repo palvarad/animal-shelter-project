@@ -1,3 +1,11 @@
+/**
+ * Group: MachineWork
+ * Group Members: Larry Hong and Peter Alvarado Nunez.
+ * Group Leader: Larry Hong
+ * Date: 11-11-2015
+ * Course: IT 306 - 001
+ * Project Phase V - Preliminary System Implementation
+ */
 package animalShelterManager;
 
 /**
@@ -108,15 +116,6 @@ public class Animal {
 		}
 	}
 	
-	/**
-	 * Special purpose method to make changes to the Animal class when an animal is adopted.
-	 * @param type
-	 * @return String animalID
-	 */
-	public static String animalAdopted(Animal adopted){
-		return adopted.getAnimalID();
-	}
-	
 	public void setAnimalID(String id){
 		//If the name is blank then an exception is thrown to inform the user.
 		if(id.trim().equals("")){
@@ -130,7 +129,7 @@ public class Animal {
 	
 	/**
 	 * Special purpose method to create the ID for each animal. Based on the type the first letter of the ID changes.
-	 * The rest of the ID is calculated by adding INIT_ID and the animal count.
+	 * The rest of the ID is calculated by adding INIT_ID and the animal history.
 	 * @param typeToCreate
 	 * @return String newID
 	 */

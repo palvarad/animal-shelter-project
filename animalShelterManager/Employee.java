@@ -1,3 +1,11 @@
+/**
+ * Group: MachineWork
+ * Group Members: Larry Hong and Peter Alvarado Nunez.
+ * Group Leader: Larry Hong
+ * Date: 11-11-2015
+ * Course: IT 306 - 001
+ * Project Phase V - Preliminary System Implementation
+ */
 package animalShelterManager;
 
 /**
@@ -100,7 +108,7 @@ public class Employee extends ShelterPerson implements Comparable<Object>{
 	}
 	
 	/**
-	 * Special purpose method to compare the id of a newly created employee with an old employee
+	 * Special purpose method to compare the id of a newly created employee with current employees
 	 * to avoid two employees with the same id.
 	 * @return -2: invalid. 0: equal. -1: not equal.
 	 */
