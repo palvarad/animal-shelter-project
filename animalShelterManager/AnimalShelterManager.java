@@ -18,11 +18,11 @@ public class AnimalShelterManager {
 		int choice = 0, terminate = 0;
 		
 		//Array list set up of for all the objects that will be store inside an array list.
-		List<ShelterPerson> shelterManager = new ArrayList<ShelterPerson>();
-		List<ShelterPerson> shelterEmployees = new ArrayList<ShelterPerson>();
-		List<ShelterPerson> shelterCustomers = new ArrayList<ShelterPerson>();
-		List<Animal> shelterAnimals = new ArrayList<Animal>();
-		List<Inventory> shelterInventory = new ArrayList<Inventory>();
+		List<ShelterPerson> shelterManager = new LinkedList<ShelterPerson>();
+		List<ShelterPerson> shelterEmployees = new LinkedList<ShelterPerson>();
+		List<ShelterPerson> shelterCustomers = new LinkedList<ShelterPerson>();
+		List<Animal> shelterAnimals = new LinkedList<Animal>();
+		List<Inventory> shelterInventory = new LinkedList<Inventory>();
 		
 		//ExpenseReport object to store all the transactions done in the current session.
 		ExpenseReport currentExpenses = new ExpenseReport("Current Report", 0, 0);
@@ -331,34 +331,32 @@ public class AnimalShelterManager {
 	
 	private static void animalAdoption(List<ShelterPerson> customers, List<Animal> animals,  List<Inventory> items, ExpenseReport current){
 		final String TITLE = "Animal Shelter Adooption Menu";
-		int foundIndex = 0;
-		String phoneNum = "";
-		boolean customerFound = false;
+		int compareResult = 0;
 		boolean valid = true;
+		customers.add(new Customer());
 		
 		do{
 			try{
 				valid = true;	
-				phoneNum = JOptionPane.showInputDialog(null, "Enter the customer's phone number:", TITLE, JOptionPane.QUESTION_MESSAGE);
-				Customer.validatePhoneNumber(phoneNum);
+				((Customer)customers.get(customers.size()-1)).setPhoneNumber(JOptionPane.showInputDialog(null,
+									"Enter the customer's phone number:", TITLE, JOptionPane.QUESTION_MESSAGE));
 				
-				for(ShelterPerson c : customers){
-					if(c instanceof Customer){
-						if(((Customer)c).getPhoneNumber().equals(phoneNum)){
-							foundIndex = customers.indexOf(c);
-							customerFound = true;
+				for(int x = 0; x < customers.size() - 1; x++){
+					if(customers.get(x) instanceof Customer){
+						compareResult = ((Customer)customers.get(x)).compareTo((Customer)customers.get(customers.size()-1));
+						if(compareResult == 0){
+							customers.remove(customers.get(customers.size()-1));
+							JOptionPane.showMessageDialog(null, "Welcome Back " + customers.get(x).getFirstName() + "!");
+							adoptAnimal((Customer)customers.get(x), animals, items, current);
+							break;
 						}
 					}
 				}
 				
-				if(customerFound){
-					JOptionPane.showMessageDialog(null, "Welcome Back " + customers.get(foundIndex).getFirstName() + "!");
-					adoptAnimal((Customer)customers.get(foundIndex), animals, items, current);
-				}
-				else if(!customerFound){
+				if(compareResult == -1){
 					JOptionPane.showMessageDialog(null, "Customer information not found.\n A new account must be created.");
-					createNewCustomer(customers, phoneNum);
-					adoptAnimal((Customer)customers.get(foundIndex), animals, items, current);
+					createNewCustomer(customers);
+					adoptAnimal((Customer)customers.get(customers.size()-1), animals, items, current);
 				}
 			
 				writeShelterPersonToFile(customers);
@@ -445,17 +443,15 @@ public class AnimalShelterManager {
 		JOptionPane.showMessageDialog(null, header + population + currentPop + maxPop, TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	private static void createNewCustomer(List<ShelterPerson> customers, String phone){
+	private static void createNewCustomer(List<ShelterPerson> customers){
 		final String TITLE = "Animal Shelter Adooption Menu", FNAME_PROMPT = "Enter the customer's first name:",
 						LNAME_PROMPT = "Enter the customer's last name:";
 		boolean valid = true;
 		int promptLevel = 0;
-		customers.add(new Customer());
 		
 		do{
 			valid = true;
 			try{
-				((Customer)customers.get(customers.size()-1)).setPhoneNumber(phone);
 				if(promptLevel == 0){
 					((Customer)customers.get(customers.size()-1)).setFirstName(JOptionPane.showInputDialog(null, FNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
 					promptLevel = 1;
@@ -471,7 +467,7 @@ public class AnimalShelterManager {
 		}while(!valid);
 	}
 	
-	private static void adoptAnimal(Customer oldCustomer, List<Animal> animals,  List<Inventory> items, ExpenseReport current){
+	private static void adoptAnimal(Customer customer, List<Animal> animals,  List<Inventory> items, ExpenseReport current){
 		final String TITLE = "Animal Shelter Adooption Menu";
 		final int PURCHASE_REQUIREMENT = 2;
 		int choice = animalMenu();
@@ -497,7 +493,7 @@ public class AnimalShelterManager {
 		
 		for(Animal a : animals){
 			if(a.getAnimalType().equals(animalType)){
-				oldCustomer.adoptAnimal(a);
+				customer.adoptAnimal(a);
 				JOptionPane.showMessageDialog(null, adoptionMessage + a.getAnimalID() + adoptionMessageCont,
 						TITLE, JOptionPane.INFORMATION_MESSAGE);
 				animals.remove(a);
@@ -553,6 +549,7 @@ public class AnimalShelterManager {
 		final int INCREASE_COUNT = 1, EMPLOYEE_COUNT = Employee.getEmployeeCount();
 		boolean valid = true;
 		int promptLevel = 0;
+		int compareResult = 0;
 		employees.add(new Employee());
 		
 		do{
@@ -568,7 +565,20 @@ public class AnimalShelterManager {
 				}
 				if(promptLevel == 2){
 					((Employee)employees.get(EMPLOYEE_COUNT)).setEmployeeId(JOptionPane.showInputDialog(null, ID_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
-					Employee.setEmployeeCount(EMPLOYEE_COUNT + INCREASE_COUNT);
+					for(int x = 0; x < employees.size() - 1; x++){
+						if(employees.get(x) instanceof Employee){
+							compareResult = ((Employee)employees.get(x)).compareTo((Employee)employees.get(employees.size()-1));
+							if(compareResult == 0){
+								JOptionPane.showMessageDialog(null, "An employee has already been assigned that ID.\n Please enter a new ID.",
+										TITLE, JOptionPane.ERROR_MESSAGE);
+								valid = false;
+								break;
+							}
+						}
+					}
+					if(compareResult == -1){
+						Employee.setEmployeeCount(EMPLOYEE_COUNT + INCREASE_COUNT);
+					}
 				}
 			}catch(IllegalArgumentException e){
 				JOptionPane.showMessageDialog(null, e.getMessage(), TITLE, JOptionPane.ERROR_MESSAGE);
