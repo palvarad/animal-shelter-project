@@ -1,6 +1,6 @@
 /**
  * Group: MachineWork
- * Group Members: Larry Hong and Peter Alvarado Nunez.
+ * Group Members: Larry Hong (G00714737) and Peter Alvarado Nunez (G00884723).
  * Group Leader: Larry Hong
  * Date: 11-11-2015
  * Course: IT 306 - 001
@@ -519,7 +519,7 @@ public class AnimalShelterManager {
 	
 	/**
 	 * Method to handle the adoption of animals. It creates a receipt and display the ID of an animal available based on
-	 * the type chosen.
+	 * the type chosen. 
 	 * @param customer
 	 * @param animals
 	 * @param items
@@ -546,26 +546,40 @@ public class AnimalShelterManager {
 			}
 		}
 		
+		//The total cost of adopting is calculated and it will be displayed later.
 		total = foodCost + medicineCost;
 		adoptionMessage += animalType + " is available for adoption.\n ID: ";
 		adoptionMessageCont = "\n Food Cost: " + String.format("$%,.2f", foodCost) + "\n"
 				+ " Medicine Cost: " + String.format("$%,.2f", medicineCost) + "\n Total: " + String.format("$%,.2f", total);
 		
+		//For loop to go through all the animals until a match for the same animal type is found.
 		for(Animal a : animals){
 			if(a.getAnimalType().equals(animalType)){
 				customer.adoptAnimal(a);
+				//When the match is found the message is displayed.
 				JOptionPane.showMessageDialog(null, adoptionMessage + a.getAnimalID() + adoptionMessageCont,
 						TITLE, JOptionPane.INFORMATION_MESSAGE);
+				//The animal with the matching type gets remove from the list.
 				animals.remove(a);
 				break;
 			}
 		}
+		//Adopting an animal is considered profit and is added to the current calculations.
 		current.setMonthProfit(total);
 	}
 	
+	/**
+	 * Method to count the different types of animals in the shelter and return the count for that
+	 * animal type.
+	 * @param animals
+	 * @param index
+	 * @return
+	 */
 	private static int animalTypeCount(List<Animal> animals, int index){
+		//Array to hold the count for all the types.
 		int[] counts = {0, 0, 0, 0};
 		
+		//For loop to go through all the animals in the shelter to count their type.
 		for(Animal a : animals){
 			if(a.getAnimalType().equals(Animal.getAnimalTypes(0))){
 				counts[0]++;
@@ -580,9 +594,15 @@ public class AnimalShelterManager {
 				counts[3]++;
 			}
 		}
+		//Returns the count for the specified animal index.
 		return counts[index];
 	}
 	
+	/**
+	 * Method to display all the employees in the shelter. The id, first name,
+	 * and last name of the employee is displayed.
+	 * @param employees
+	 */
 	private static void displayEmployees(List<ShelterPerson> employees){
 		final String TITLE = "Animal Shelter Manager Menu";
 		String employeeList = "List of Employees:\n";
@@ -597,37 +617,54 @@ public class AnimalShelterManager {
 				}
 			}
 		}
-		
+		//Message that is displayed to the user with the list of all the employees.
 		JOptionPane.showMessageDialog(null, employeeList, TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
+	/**
+	 * Method to allow the manager to add a new employee to the animal shelter.
+	 * @param employees
+	 */
 	private static void addEmployee(List<ShelterPerson> employees){
+		//Variables to display the various messages to the user.
 		final String TITLE = "Animal Shelter Manager Menu";
 		final String FNAME_PROMPT = "Enter the new employee's first name:";
 		final String LNAME_PROMPT = "Enter the new employee's last name:";
 		final String ID_PROMPT = "Enter the ID of the new employee:";
+		//Variables to store the current employee count and the number of employees to increment by.
 		final int INCREASE_COUNT = 1, EMPLOYEE_COUNT = Employee.getEmployeeCount();
+		//Variable to control the loop that prompts the manager for the employee information.
 		boolean valid = true;
+		//Variable to control the prompt level, so the user is not asked the same question twice.
 		int promptLevel = 0;
+		//Variable to store the comparison of the ID entered by the manager and the existing IDs.
 		int compareResult = 0;
+		//Adds a new employee to the list.
 		employees.add(new Employee());
 		
+		//Do while loop to prompt the user for the employee information.
 		do{
 			valid = true;
+			//Try and catch to avoid exceptions crashing the program.
 			try{
+				//First prompt to ask the manager for the first name of the new employee.
 				if(promptLevel == 0){
 					employees.get(EMPLOYEE_COUNT).setFirstName(JOptionPane.showInputDialog(null, FNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
 					promptLevel = 1;
 				}
+				//First prompt to ask the manager for the last name of the new employee.
 				if(promptLevel == 1){
 					employees.get(EMPLOYEE_COUNT).setLastName(JOptionPane.showInputDialog(null, LNAME_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
 					promptLevel = 2;
 				}
+				//First prompt to ask the manager for the id of the new employee.
 				if(promptLevel == 2){
 					((Employee)employees.get(EMPLOYEE_COUNT)).setEmployeeId(JOptionPane.showInputDialog(null, ID_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
+					//Loop to go through all the employees and compare their IDs with the ID entered by the manager to avoid duplicates.
 					for(int x = 0; x < employees.size() - 1; x++){
 						if(employees.get(x) instanceof Employee){
 							compareResult = ((Employee)employees.get(x)).compareTo((Employee)employees.get(employees.size()-1));
+							//If the ID is already in use then this error is displayed.
 							if(compareResult == 0){
 								JOptionPane.showMessageDialog(null, "An employee has already been assigned that ID.\n Please enter a new ID.",
 										TITLE, JOptionPane.ERROR_MESSAGE);
@@ -636,6 +673,7 @@ public class AnimalShelterManager {
 							}
 						}
 					}
+					//If the ID is unique then the new employee can be added to the list.
 					if(compareResult == -1){
 						Employee.setEmployeeCount(EMPLOYEE_COUNT + INCREASE_COUNT);
 					}
@@ -647,59 +685,87 @@ public class AnimalShelterManager {
 		}while(!valid);
 	}
 	
+	/**
+	 * Method to remove an employee from the list.
+	 * @param employees
+	 */
 	private static void removeEmployee(List<ShelterPerson> employees){
+		//Variables to display the various messages to the user.
 		final String TITLE = "Animal Shelter Manager Menu";
 		final String ERROR_NFE = "Please enter a number to select an option.";
 		final String ERROR_MENU = "Please select an option from the menu.";
 		String employeeList = "Select an employee to remove:\n";
+		//Variables to store the choice by the user and the counter to display the options.
 		int removeThis = 0, counter = 0;
+		//Variable to control the loop that prompts the manager for the employee information.
 		boolean valid = true;
+		
+		//If the employee count is 0 then there are no employees and the messages is shown. 
 		if(Employee.getEmployeeCount() == 0){
 			employeeList = "There are no employees.";
 		}
 		else{
+			//For loop to display all the employees that are currently working at the shelter.
 			for(ShelterPerson e : employees){
 				if(e instanceof Employee){
 					employeeList += "  " + (counter+1) + ") " + e.getFirstName() + " " + e.getLastName() +"\n";
 				}
 				counter++;
 			}
+			//Counter is increased one more time to be used as the option to exit the menu.
 			counter++;
 			employeeList += "  " + (counter) + ") Exit";
+			//Loop to display the employees in the list and allow the manager to remove one of the employees.
 			do{
 				try{
 					removeThis = Integer.parseInt(JOptionPane.showInputDialog(null, employeeList, TITLE, JOptionPane.INFORMATION_MESSAGE));
-				
+					//If the user enters an option from the menu the employee at that number gets removed.
 					if(removeThis > 0 && removeThis <= Employee.getEmployeeCount()){
 						employees.remove(removeThis - 1);
 						JOptionPane.showMessageDialog(null, "Employee List Updated!", TITLE, JOptionPane.INFORMATION_MESSAGE);
 						Employee.setEmployeeCount(Employee.getEmployeeCount() - 1);
+						//After the employee is removed the loop can terminate.
 						valid = true;
 					}
 					else if(removeThis == counter){
+						//If the user decides to return to the previous menu the loop can terminate.
 						valid = true;
 					}
 					else{
+						//If the user enters an option outside the available options this error is display.
 						JOptionPane.showMessageDialog(null, ERROR_MENU, TITLE, JOptionPane.ERROR_MESSAGE);
 						valid = false;
 					}
 				}catch(NumberFormatException e){
+					//If the user entered a non-numeric option then this error is displayed.
 					JOptionPane.showMessageDialog(null, ERROR_NFE, TITLE, JOptionPane.ERROR_MESSAGE);
 				}
 			}while(!valid);
 		}
 	}
 	
+	/**
+	 * Method for the user to create a 12 month simulation of profits and expenses based on user input.
+	 * The input includes the number of animals expected at the shelter and the number animals that is expected
+	 * to be adopted.
+	 * @param current
+	 * @param items
+	 */
 	private static void yearSimulation(ExpenseReport current, List<Inventory> items){
+		//Variables to display the various messages to the user.
 		final String TITLE = "Animal Shelter 12-Month Simulation";
 		final String ITEM_PROMPT = "Enter the expected percentage of merchandise to be sold:";
 		final String ANIMAL_PROMPT = "Enter the expected number of animals in the shelter for the year:";
 		final String ANIMAL_PROMPT2 = "Enter the expected number of animals to be adopted for the year:";
 		final String ERROR_NFE = "Please enter a positive number as the percentage.";
+		//Variables to store the max number of animals that can be at the shelter in the year.
+		//Based on the max number of animals (100) * the number of prompts (11).
 		final int MAX_YEARLY_ANIMALS = 1100;
+		//Variable to store the number of months for the simulation.
 		final int MONTHS_NUM = 12;
 		
 		String simulation = "12 Month Simulation:\n";
+		//Variables that will store values that will be used during the calculations.
 		double inventoryAverageExpenses = 0;
 		double inventoryAverageProfit = 0;
 		double employeeExpense = 0;
@@ -708,30 +774,37 @@ public class AnimalShelterManager {
 		double monthTotalProfit = 0;
 		double averageAnimalExpense = 0;
 		double averageAnimalProfit = 0;
-		int expectedAnimals = 0, expectedAdoptions = 0, promptLevel = 0;;
+		int expectedAnimals = 0, expectedAdoptions = 0, promptLevel = 0;
+		//Variable to control the loop that prompts the user.
 		boolean valid = true;
+		//Array to store all the simulated months as an ExpenseReport.
 		ExpenseReport[] yearSimulation = new ExpenseReport[MONTHS_NUM];
 		
+		//Loop to calculate the average cost of all the items based on their cost and the number of items.
 		for(int i = 0; i < Inventory.getMaxItemsCount(); i++){
+			//The first 7 items are related to animal expense, so they are calculated separately.
 			if(i >= 0 && i <= 7){
 				averageAnimalExpense += items.get(i).getItemPurchaseCost();
 				averageAnimalProfit += items.get(i).getItemSellCost();
 			}
+			//Variables to store the average all of the items in the inventory.
 			inventoryAverageExpenses += items.get(i).getItemPurchaseCost();
 			inventoryAverageProfit += items.get(i).getItemSellCost();
 		}
 		
+		//Variables to store the rest of the expenses.
 		inventoryAverageExpenses = (inventoryAverageExpenses / Inventory.getMaxItemsCount());
 		inventoryAverageProfit = (inventoryAverageProfit / Inventory.getMaxItemsCount());
+		//The employee pay is biweekly, so to calculate a monthly pay it has to be multiply by two.
 		employeeExpense = ExpenseReport.calculateEmployeeExpense(Employee.getEmployeeCount(), Employee.getEmployeePay()) * 2;
 		averageAnimalExpense = (averageAnimalExpense / 8); 
 		averageAnimalProfit = (averageAnimalProfit / 8); 
 		
-		
+		//Loop to prompt the user for the information needed to calculate the 12 month simulation.
 		for(int x = 0; x < MONTHS_NUM; x++){
 			monthTotalExpense = 0;
 			monthTotalProfit = 0;
-
+			//The first month is assigned the current expenses and profits as the program is running.
 			if(x == 0){
 				yearSimulation[x] = new ExpenseReport("Month " + (x+1), current.getMonthProfit(), current.getMonthExpense());
 			}
@@ -739,17 +812,19 @@ public class AnimalShelterManager {
 				do{
 					valid = true;
 					try{
+						//First prompt to ask for the expected number of animals at the shelter.
 						if(promptLevel == 0){
 							expectedAnimals = Integer.parseInt(JOptionPane.showInputDialog(null, ANIMAL_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
 							if(expectedAnimals < 0 || expectedAnimals <= MAX_YEARLY_ANIMALS){
 								averageAnimalExpense = (averageAnimalExpense * expectedAnimals);
 								promptLevel = 1;
+							//Error if the number of animals is greater than the max allowed.
 							}else{
 								JOptionPane.showMessageDialog(null, "The number of expected animals must be positive and less than " +  MAX_YEARLY_ANIMALS,
 											TITLE, JOptionPane.ERROR_MESSAGE);
 							}
 						}
-						
+						//Prompt the user for the expected number of animals to be adopted during the year.
 						if(promptLevel == 1){
 							expectedAdoptions = Integer.parseInt(JOptionPane.showInputDialog(null, ANIMAL_PROMPT2, TITLE, JOptionPane.QUESTION_MESSAGE));
 							if(expectedAnimals < 0 || expectedAnimals <= MAX_YEARLY_ANIMALS){
@@ -761,15 +836,19 @@ public class AnimalShelterManager {
 							}
 						}
 						
+						//Prompt the user for the expected percentage of inventory to be sold during that simulated month.
 						if(promptLevel == 2){
 							percentToSell = Double.parseDouble(JOptionPane.showInputDialog(null, ITEM_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
 						}
 						
-						monthTotalExpense =  (ExpenseReport.simulateMonthProft(percentToSell, inventoryAverageProfit) + (employeeExpense + averageAnimalExpense));
-						monthTotalProfit = ExpenseReport.simulateMonthExpense(percentToSell, inventoryAverageExpenses) + averageAnimalProfit;
-						
+						//Stores the profit calculations based on the the values calculated and the values entered by the user.
+						monthTotalProfit =  (ExpenseReport.simulateMonthProft(percentToSell, inventoryAverageProfit) + (employeeExpense + averageAnimalExpense));
+						//Stores the profit calculations based on the the values calculated and the values entered by the user.
+						monthTotalExpense = ExpenseReport.simulateMonthExpense(percentToSell, inventoryAverageExpenses) + averageAnimalProfit;
+						//Stores the information in the next position in the array as a new object.
 						yearSimulation[x] = new ExpenseReport("Month " + (x+1), monthTotalProfit, monthTotalExpense);
 					}catch(NumberFormatException e){
+						//Error to display if the user enters a non-numeric value this error is displayed.
 						JOptionPane.showMessageDialog(null, ERROR_NFE, TITLE, JOptionPane.ERROR_MESSAGE);
 						valid = false;
 					}
@@ -777,17 +856,25 @@ public class AnimalShelterManager {
 			}
 		}
 		
+		//Loop to print all the simulated months information.
 		for(int x = 0; x < MONTHS_NUM; x++){
 			simulation += yearSimulation[x].toString() + "\n";
 		}
 		
 		JOptionPane.showMessageDialog(null, simulation, TITLE, JOptionPane.INFORMATION_MESSAGE);
+		//Prompt to ask the user if they wished to store the simulation.
 		if(JOptionPane.showConfirmDialog(null, "Save simulation to a text file?", TITLE,
 				JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 			writeSimulationToFile(yearSimulation);
 		}
 	}
 	
+	/**
+	 * Method to calculate the animal expenses based on the type and the number of animals.
+	 * @param multiple
+	 * @param items
+	 * @param animals
+	 */
 	private static void animalExpense(boolean multiple, List<Inventory> items, List<Animal> animals){
 		final String TITLE = "Animal Shelter Manager Menu";
 		String header = "Cost of ";
@@ -800,62 +887,88 @@ public class AnimalShelterManager {
 		
 		animalChoice = animalMenu();
 		animalType = Animal.getAnimalTypes(animalChoice);
-		
+		//Loops to find the associated expense with the animal type.
 		for(Inventory i : items){
+			//First finds the cost of food by using the animal type and the letter F.
 			if(i.getItemName().contains(animalType + " F")){
 				foodCost = (i.getItemPurchaseCost() * ExpenseReport.getFoodMultiplier());
 			}
+			//Second finds the cost of medicine by using the animal type and the letter M.
 			if(i.getItemName().contains(animalType + " M")){
 				medicineCost = (i.getItemPurchaseCost() * ExpenseReport.getMedicineMultiplier());
 				break;
 			}
 		}
 		
+		//If to calculate the cost of all the animals of that type.
 		if(multiple){
 			animalCount = animalTypeCount(animals, animalChoice);
 			totalCost = ExpenseReport.calculateAnimalExpense(animalCount, foodCost, medicineCost);
 			header += "the " + animalType + " population per month:\n Population: " + animalCount + "\n";
 		}
+		//Else the cost of a single animal is calculated.
 		else{
 			animalCount = 1;
 			totalCost = ExpenseReport.calculateAnimalExpense(animalCount, foodCost, medicineCost);
 			header += "a single " + animalType + " per month:\n";
 		}
 		
+		//Message to display all the costs.
 		JOptionPane.showMessageDialog(null, header + "  Food cost per month: " + String.format("$%,.2f", (foodCost * animalCount)) + "\n" +
 					"  Medicine cost per month: " + String.format("$%,.2f", (medicineCost * animalCount)) + "\n" + "  Total: " + 
 					String.format("$%,.2f", totalCost) + "\n", TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
+	/**
+	 * Method to display the available types of animals in the shelter. This method is used anywhere the user
+	 * has to pick from one of the type of animals.
+	 * @return
+	 */
 	private static int animalMenu(){
+		//Variables to display the various messages to the user.
 		final String TITLE = "Animal Shelter Employee Menu";
 		final String PROMPT = "Select the type of animal:\n";
 		final String[] OPTIONS = {"  1) Dog\n", "  2) Cat\n", "  3) Small Rodent\n", "  4) Bird\n"};
 		final String ERROR_NFE = "Please enter a number to select an option.";
 		final String ERROR_MENU = "Please select an option from the menu.";
+		//Variable to store the user choice.
 		int choice = 0;
+		//Variable to control the loop.
 		boolean validChoice = false;
 		
 		do{
+			//Try and catch to prevent exceptions from crashing the program.
 			try{
+				//Animal menu is displayed.
 				choice = Integer.parseInt(JOptionPane.showInputDialog(null, PROMPT + OPTIONS[0] + OPTIONS[1] + OPTIONS[2]
 						+ OPTIONS[3], TITLE, JOptionPane.QUESTION_MESSAGE));
 				if(choice <= 0 || choice > 4){
+					//If the user enters an option outside the menu options this error is displayed.
 					JOptionPane.showMessageDialog(null, ERROR_MENU, TITLE, JOptionPane.ERROR_MESSAGE);
 					validChoice = false;
 				}else{
+					//If the user enters a valid choice the loop can terminate.
 					validChoice = true;
 				}
 			}catch(NumberFormatException e){
+				//If the user enters a non-numeric value then this error is displayed.
 				JOptionPane.showMessageDialog(null, ERROR_NFE, TITLE, JOptionPane.ERROR_MESSAGE);
 			}
 			
 		}while(!validChoice);
 		
+		//The location of the animal type in the an array in the DDC is returned.
 		return choice - 1;
 	}
 	
+	/**
+	 * Method to display the available items in the shelter. This method is used anywhere the user has to
+	 * pick from one of the type of animals.
+	 * @param items
+	 * @return
+	 */
 	private static int inventoryMenu(List<Inventory> items){
+		//Variables to display the various messages to the user.
 		final String TITLE = "Animal Shelter Employee Menu";
 		final String PROMPT = "Select an item:\n";
 		final String[] PRODUCTS = {"Food", "Medicine", "Food Bowls", "Leashes", "Collars", "Toys"};
@@ -863,38 +976,47 @@ public class AnimalShelterManager {
 				"  4) " + PRODUCTS[3] + "\n", "  5) " + PRODUCTS[4] + "\n", "  6) " + PRODUCTS[5] + "\n"};
 		final String ERROR_NFE = "Please enter a number to select an option.";
 		final String ERROR_MENU = "Please select an option from the menu.";
+		//Variable to store the user choice.
 		int choice = 0;
 		String item = "";
+		//Variable to control the loop.
 		boolean validChoice = false;
 		
 		do{
+			//Try and catch to prevent exceptions from crashing the program.
 			try{
+				//Inventory menu is displayed.
 				choice = Integer.parseInt(JOptionPane.showInputDialog(null, PROMPT + OPTIONS[0] + OPTIONS[1] + OPTIONS[2]
 						+ OPTIONS[3] + OPTIONS[4] + OPTIONS[5], TITLE, JOptionPane.QUESTION_MESSAGE));
-				
 				if(choice <= 0 || choice > 6){
+					//If the user enters an option outside the menu options this error is displayed.
 					JOptionPane.showMessageDialog(null, ERROR_MENU, TITLE, JOptionPane.ERROR_MESSAGE);
 					validChoice = false;
 				}else{
+					//If the user enters 1 or 2 then the animal menu has to be called.
 					if(choice == 1 || choice == 2){
 						item = Animal.getAnimalTypes(animalMenu()) + " " + PRODUCTS[choice - 1];
 					}else{
+						//Any other option is does not need to call other methods, so the name is stored.
 						item = PRODUCTS[choice - 1];
 					}
+					//Loop to find the item the user picked in the menu and the position in the list.
 					for(Inventory i : items){
 						if(i.getItemName().equals(item)){
 							choice = items.indexOf(i);
 							break;
 						}
 					}
+					//If everything was done correctly the loop can terminate.
 					validChoice = true;
 				}
 			}catch(NumberFormatException e){
+				//If the user enters a non-numeric value then this error is displayed.
 				JOptionPane.showMessageDialog(null, ERROR_NFE, TITLE, JOptionPane.ERROR_MESSAGE);
 			}
 			
 		}while(!validChoice);
-		
+		//Returns the position in the items list so the inforamtion for that item can be used.
 		return choice;
 	}
 	

@@ -1,6 +1,6 @@
 /**
  * Group: MachineWork
- * Group Members: Larry Hong and Peter Alvarado Nunez.
+ * Group Members: Larry Hong (G00714737) and Peter Alvarado Nunez (G00884723).
  * Group Leader: Larry Hong
  * Date: 11-11-2015
  * Course: IT 306 - 001
