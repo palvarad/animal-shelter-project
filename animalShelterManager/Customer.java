@@ -97,6 +97,11 @@ public class Customer extends ShelterPerson implements Comparable<Object>{
 	 * @return boolean
 	 */
 	public void setPhoneNumber(String phone){
+		//If the user hits cancel a null is sent. Error message to let the user know they must enter a phone. 
+		if(phone == null){
+			throw new IllegalArgumentException("Sorry, but a phone number must be entered.");
+		}
+		
 		//If the phone number is blank then an exception is thrown to inform the user.
 		if(phone.trim().equals("")){
 			throw new IllegalArgumentException("The phone number cannot be blank");

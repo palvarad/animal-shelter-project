@@ -57,12 +57,23 @@ public abstract class ShelterPerson {
 	 * @return boolean
 	 */
 	public void setFirstName(String fName){
+		//If the user hits cancel a null is sent. Error message to let the user know they must enter a first name. 
+		if(fName == null){
+			throw new IllegalArgumentException("Sorry, but a first name must be entered.");
+		}
+		
 		//If the name is blank then an exception is thrown to inform the user.
 		if(fName.trim().equals("")){
 			throw new IllegalArgumentException("The first name cannot be blank");
 		}
 		//If the name is not blank then the name is stored and a true is return.
 		else{
+			//Loop to check that all characters are letters and there are no digits.
+			for(int x = 0; x < fName.length(); x++){
+				if(Character.isDigit(fName.charAt(x))){
+					throw new IllegalArgumentException("No digits are allowed in the name.");
+				}
+			}
 			this.firstName = fName;
 		}
 	}
@@ -73,12 +84,23 @@ public abstract class ShelterPerson {
 	 * @return boolean
 	 */
 	public void setLastName(String lName){
+		//If the user hits cancel a null is sent. Error message to let the user know they must enter a last name. 
+		if(lName == null){
+			throw new IllegalArgumentException("Sorry, but a last name must be entered.");
+		}
+		
 		//If the name is blank then an exception is thrown to inform the user.
 		if(lName.trim().equals("")){
 			throw new IllegalArgumentException("The last name cannot be blank");
 		}
 		//If the name is not blank then the name is stored and a true is return.
 		else{
+			//Loop to check that all characters are letters and there are no digits.
+			for(int x = 0; x < lName.length(); x++){
+				if(Character.isDigit(lName.charAt(x))){
+					throw new IllegalArgumentException("No digits are allowed in the name.");
+				}
+			}
 			this.lastName = lName;
 		}
 	}

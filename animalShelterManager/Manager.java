@@ -48,6 +48,11 @@ public class Manager extends ShelterPerson{
 	 * @return void
 	 */
 	public void validatePassword(String pass){
+		//If the user hits cancel a null is sent. Error message to let the user know they must enter a password. 
+		if(pass == null){
+			throw new IllegalArgumentException("Returning to previous menu");
+		}
+		
 		//If the password is blank an exception is thrown to inform the user.
 		if(pass.trim().equals("")){
 			throw new IllegalArgumentException("The password cannot be blank");
