@@ -177,8 +177,10 @@ public class AnimalShelterManager {
 		int purchaseCount = 0, buyMore = 0, item = 0;
 		//Variables to display the messages to the user.
 		String receipt = "", quantityPrompt = "", morePurchasesPrompt = "Would you like to make another purchase?", header = "";
-		//VAriable to store the total the user will pay at the end.
+		//Variable to store the total the user will pay at the end.
 		double total = 0;
+		//Variable to check if the user entered the exit option in the menu.
+		boolean countPrompt = false;
 		//Parallel arrays to store the name, quantity, and prices of the items the user wants to buy.
 		String[] itemNames = new String[Inventory.getMaxItemsCount()];
 		int[] itemQuan = new int[Inventory.getMaxItemsCount()];
@@ -188,12 +190,19 @@ public class AnimalShelterManager {
 		do{
 			//Calls the inventoryMenu method to show all the options to the user.
 			item = inventoryMenu(items);
+			if(item == -100){
+				break;
+			}
 			quantityPrompt = "Enter the number of " + items.get(item).getItemName() + " to purchase:";
 			itemNames[purchaseCount] = items.get(item).getItemName();
 			
 			//Try and catch to prevent the user from entering non-numeric values and to catch other exceptions.
 			try{
-				itemQuan[purchaseCount] = Integer.parseInt(JOptionPane.showInputDialog(null, quantityPrompt, TITLE, JOptionPane.QUESTION_MESSAGE));
+				do{
+					itemQuan[purchaseCount] = Integer.parseInt(JOptionPane.showInputDialog(null, quantityPrompt, TITLE, JOptionPane.QUESTION_MESSAGE));
+					countPrompt = true;
+				}while(!countPrompt);
+				
 				if(manager){
 					itemPrices[purchaseCount] = items.get(item).inventoryPurchase((itemQuan[purchaseCount]));
 				}
@@ -211,32 +220,43 @@ public class AnimalShelterManager {
 							+ " || Cost: " + String.format("$%,.2f", itemPrices[x]) + "\n";
 					total += itemPrices[x];
 				}
-				//Message to display the receipt alonng the total.
+				//Message to display the receipt along the total.
 				JOptionPane.showMessageDialog(null, header + receipt + "  Total: " + String.format("$%,.2f", total));
+				if(items.get(item).getItemCount() <= Inventory.getLowAlert()){
+					JOptionPane.showMessageDialog(null, "The number of " + items.get(item).getItemName() + " is less than "
+								+ Inventory.getLowAlert() + "\n In Stock: " + items.get(item).getItemCount()
+								, TITLE, JOptionPane.INFORMATION_MESSAGE);
+				}
 			}catch(NumberFormatException e){
 				JOptionPane.showMessageDialog(null, "The quantity must a numeric value.", TITLE, JOptionPane.ERROR_MESSAGE);
+				countPrompt = false;
 				
 			}catch(IllegalArgumentException e){
 				JOptionPane.showMessageDialog(null, e.getMessage(), TITLE, JOptionPane.ERROR_MESSAGE);
 			}
-			//Prompt to know if the user would like to purchase more items.
-			buyMore = JOptionPane.showConfirmDialog(null, morePurchasesPrompt, TITLE, JOptionPane.YES_NO_OPTION);
-			//If the user wants to purchase more items the receipt and total are reset and will be calculated
-			//again during the execution of the for loop.
-			if(buyMore == JOptionPane.YES_OPTION){
-				receipt = "";
-				total = 0;
+			if(countPrompt){
+				//Prompt to know if the user would like to purchase more items.
+				buyMore = JOptionPane.showConfirmDialog(null, morePurchasesPrompt, TITLE, JOptionPane.YES_NO_OPTION);
+				//If the user wants to purchase more items the receipt and total are reset and will be calculated
+				//again during the execution of the for loop.
+				if(buyMore == JOptionPane.YES_OPTION){
+					receipt = "";
+					total = 0;
+				}
 			}
 		}while(buyMore != JOptionPane.NO_OPTION);
-		//When the user selects to not purchase anymore then the final receipt is displayed.
-		header = "Final Receipt:\n";
-		JOptionPane.showMessageDialog(null, header + receipt + "  Total: " + String.format("$%,.2f", total));
-		//Based on the menu that called this method the transaction is either an expense or a profit.
-		if(manager){
-			current.setMonthExpense(total);
-		}
-		else if(!manager){
-			current.setMonthProfit(total);
+		
+		if(total != 0){
+			//When the user selects to not purchase anymore then the final receipt is displayed.
+			header = "Final Receipt:\n";
+			JOptionPane.showMessageDialog(null, header + receipt + "  Total: " + String.format("$%,.2f", total));
+			//Based on the menu that called this method the transaction is either an expense or a profit.
+			if(manager){
+				current.setMonthExpense(total);
+			}
+			else if(!manager){
+				current.setMonthProfit(total);
+			}
 		}
 	}
 	
@@ -362,10 +382,25 @@ public class AnimalShelterManager {
 				
 				switch(employeeChoice){
 					case 1:
-						animalAdoption(customers, animals, items, current);
+						//If to check that the animal shelter is not empty before trying to adopt an animal.
+						if(!animals.isEmpty()){
+							animalAdoption(customers, animals, items, current);
+						}
+						//If the there are no animals then this error is displayed.
+						else{
+							JOptionPane.showMessageDialog(null, "No animals available for adoption.", TITLE, JOptionPane.ERROR_MESSAGE);
+						}
 						break;
 					case 2:
-						addAnimal(animals);
+						//If to check that the animal shelter is not full.
+						if(animals.size() != Animal.getMaxAnimals()){
+							addAnimal(animals);
+						}
+						//If the shelter is full then this error is displayed.
+						else{
+							JOptionPane.showMessageDialog(null, "Shelter is full. No animals can be added.", TITLE, JOptionPane.ERROR_MESSAGE);
+						}
+						
 						break;
 					case 3:
 						makeOrder(items, current, false);
@@ -423,7 +458,10 @@ public class AnimalShelterManager {
 							}
 							else{
 								//If the customer has not reached the limit then they are allow to adopt an animal.
-								JOptionPane.showMessageDialog(null, "Welcome Back " + customers.get(x).getFirstName() + "!");
+								//The Customer information is displayed along side a welcome message.
+								JOptionPane.showMessageDialog(null, "Welcome Back " + customers.get(x).getFirstName() 
+											+ " " + customers.get(x).getLastName() + "!\n" + " Adoption History: "
+											+ ((Customer)customers.get(x)).getAnimalsAdopted(), TITLE, JOptionPane.INFORMATION_MESSAGE);
 								adoptAnimal((Customer)customers.get(x), animals, items, current);
 								break;
 							}
@@ -453,19 +491,24 @@ public class AnimalShelterManager {
 	private static void addAnimal(List<Animal> animals){
 		final String TITLE = "Animal Shelter Employee Menu";
 		String message = ""; 
-		Animal newAnimal = new Animal();
+		int menuResponse = 0;
 		
-		//The animal history is updated to create a new unique ID.
-		Animal.setAnimalHistory(Animal.getAnimalHistory() + 1);
-		//The type of the animal is set based on the user choice in the animal menu method.
-		newAnimal.setAnimalType(Animal.getAnimalTypes(animalMenu()));
-		//The id is created for the new animal.
-		newAnimal.setAnimalID(Animal.createAnimalID(newAnimal.getAnimalType()));
+		menuResponse = animalMenu();
 		
-		//A confirmation message is displayed to let the user know a new animal was added. 
-		message = " A new " + newAnimal.getAnimalType() + " has been added!\n ID: " + newAnimal.getAnimalID();
-		animals.add(newAnimal);
-		JOptionPane.showMessageDialog(null, message, TITLE, JOptionPane.INFORMATION_MESSAGE);
+		if(menuResponse != 4){
+			Animal newAnimal = new Animal();
+			//The animal history is updated to create a new unique ID.
+			Animal.setAnimalHistory(Animal.getAnimalHistory() + 1);
+			//The type of the animal is set based on the user choice in the animal menu method.
+			newAnimal.setAnimalType(Animal.getAnimalTypes(menuResponse));
+			//The id is created for the new animal.
+			newAnimal.setAnimalID(Animal.createAnimalID(newAnimal.getAnimalType()));
+			
+			//A confirmation message is displayed to let the user know a new animal was added. 
+			message = " A new " + newAnimal.getAnimalType() + " has been added!\n ID: " + newAnimal.getAnimalID();
+			animals.add(newAnimal);
+			JOptionPane.showMessageDialog(null, message, TITLE, JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 	
 	/**
@@ -532,40 +575,42 @@ public class AnimalShelterManager {
 		double foodCost = 0;
 		double medicineCost = 0;
 		double total = 0;
-		String animalType = Animal.getAnimalTypes(choice), adoptionMessage = "The following ", adoptionMessageCont = "";
-		
-		//Loop to get the food price and medicine price based on the animal type. The user is required to purchase a certain
-		//amount of each during the adoption.
-		for(Inventory i : items){
-			if(i.getItemName().contains(animalType + " F")){
-				foodCost = (i.getItemSellCost() * PURCHASE_REQUIREMENT);
+		if(choice != 4){
+			String animalType = Animal.getAnimalTypes(choice), adoptionMessage = "The following ", adoptionMessageCont = "";
+			
+			//Loop to get the food price and medicine price based on the animal type. The user is required to purchase a certain
+			//amount of each during the adoption.
+			for(Inventory i : items){
+				if(i.getItemName().contains(animalType + " F")){
+					foodCost = (i.getItemSellCost() * PURCHASE_REQUIREMENT);
+				}
+				if(i.getItemName().contains(animalType + " M")){
+					medicineCost = (i.getItemSellCost() * PURCHASE_REQUIREMENT);
+					break;
+				}
 			}
-			if(i.getItemName().contains(animalType + " M")){
-				medicineCost = (i.getItemSellCost() * PURCHASE_REQUIREMENT);
-				break;
+			
+			//The total cost of adopting is calculated and it will be displayed later.
+			total = foodCost + medicineCost;
+			adoptionMessage += animalType + " is available for adoption.\n ID: ";
+			adoptionMessageCont = "\n Food Cost: " + String.format("$%,.2f", foodCost) + "\n"
+					+ " Medicine Cost: " + String.format("$%,.2f", medicineCost) + "\n Total: " + String.format("$%,.2f", total);
+			
+			//For loop to go through all the animals until a match for the same animal type is found.
+			for(Animal a : animals){
+				if(a.getAnimalType().equals(animalType)){
+					customer.adoptAnimal(a);
+					//When the match is found the message is displayed.
+					JOptionPane.showMessageDialog(null, adoptionMessage + a.getAnimalID() + adoptionMessageCont,
+							TITLE, JOptionPane.INFORMATION_MESSAGE);
+					//The animal with the matching type gets remove from the list.
+					animals.remove(a);
+					break;
+				}
 			}
+			//Adopting an animal is considered profit and is added to the current calculations.
+			current.setMonthProfit(total);
 		}
-		
-		//The total cost of adopting is calculated and it will be displayed later.
-		total = foodCost + medicineCost;
-		adoptionMessage += animalType + " is available for adoption.\n ID: ";
-		adoptionMessageCont = "\n Food Cost: " + String.format("$%,.2f", foodCost) + "\n"
-				+ " Medicine Cost: " + String.format("$%,.2f", medicineCost) + "\n Total: " + String.format("$%,.2f", total);
-		
-		//For loop to go through all the animals until a match for the same animal type is found.
-		for(Animal a : animals){
-			if(a.getAnimalType().equals(animalType)){
-				customer.adoptAnimal(a);
-				//When the match is found the message is displayed.
-				JOptionPane.showMessageDialog(null, adoptionMessage + a.getAnimalID() + adoptionMessageCont,
-						TITLE, JOptionPane.INFORMATION_MESSAGE);
-				//The animal with the matching type gets remove from the list.
-				animals.remove(a);
-				break;
-			}
-		}
-		//Adopting an animal is considered profit and is added to the current calculations.
-		current.setMonthProfit(total);
 	}
 	
 	/**
@@ -718,7 +763,7 @@ public class AnimalShelterManager {
 			//Loop to display the employees in the list and allow the manager to remove one of the employees.
 			do{
 				try{
-					removeThis = Integer.parseInt(JOptionPane.showInputDialog(null, employeeList, TITLE, JOptionPane.INFORMATION_MESSAGE));
+					removeThis = Integer.parseInt(JOptionPane.showInputDialog(null, employeeList, TITLE, JOptionPane.QUESTION_MESSAGE));
 					//If the user enters an option from the menu the employee at that number gets removed.
 					if(removeThis > 0 && removeThis <= Employee.getEmployeeCount()){
 						employees.remove(removeThis - 1);
@@ -754,7 +799,7 @@ public class AnimalShelterManager {
 	private static void yearSimulation(ExpenseReport current, List<Inventory> items){
 		//Variables to display the various messages to the user.
 		final String TITLE = "Animal Shelter 12-Month Simulation";
-		final String ITEM_PROMPT = "Enter the expected percentage of merchandise to be sold:";
+		final String ITEM_PROMPT = "Enter the expected percentage of merchandise to be sold in Month ";
 		final String ANIMAL_PROMPT = "Enter the expected number of animals in the shelter for the year:";
 		final String ANIMAL_PROMPT2 = "Enter the expected number of animals to be adopted for the year:";
 		final String ERROR_NFE = "Please enter a positive number as the percentage.";
@@ -838,7 +883,8 @@ public class AnimalShelterManager {
 						
 						//Prompt the user for the expected percentage of inventory to be sold during that simulated month.
 						if(promptLevel == 2){
-							percentToSell = Double.parseDouble(JOptionPane.showInputDialog(null, ITEM_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
+							percentToSell = Double.parseDouble(JOptionPane.showInputDialog(null, ITEM_PROMPT + (x+1) + ":"
+									, TITLE, JOptionPane.QUESTION_MESSAGE));
 						}
 						
 						//Stores the profit calculations based on the the values calculated and the values entered by the user.
@@ -886,37 +932,39 @@ public class AnimalShelterManager {
 		double totalCost = 0;
 		
 		animalChoice = animalMenu();
-		animalType = Animal.getAnimalTypes(animalChoice);
-		//Loops to find the associated expense with the animal type.
-		for(Inventory i : items){
-			//First finds the cost of food by using the animal type and the letter F.
-			if(i.getItemName().contains(animalType + " F")){
-				foodCost = (i.getItemPurchaseCost() * ExpenseReport.getFoodMultiplier());
+		if(animalChoice != 4){
+			animalType = Animal.getAnimalTypes(animalChoice);
+			//Loops to find the associated expense with the animal type.
+			for(Inventory i : items){
+				//First finds the cost of food by using the animal type and the letter F.
+				if(i.getItemName().contains(animalType + " F")){
+					foodCost = (i.getItemPurchaseCost() * ExpenseReport.getFoodMultiplier());
+				}
+				//Second finds the cost of medicine by using the animal type and the letter M.
+				if(i.getItemName().contains(animalType + " M")){
+					medicineCost = (i.getItemPurchaseCost() * ExpenseReport.getMedicineMultiplier());
+					break;
+				}
 			}
-			//Second finds the cost of medicine by using the animal type and the letter M.
-			if(i.getItemName().contains(animalType + " M")){
-				medicineCost = (i.getItemPurchaseCost() * ExpenseReport.getMedicineMultiplier());
-				break;
+			
+			//If to calculate the cost of all the animals of that type.
+			if(multiple){
+				animalCount = animalTypeCount(animals, animalChoice);
+				totalCost = ExpenseReport.calculateAnimalExpense(animalCount, foodCost, medicineCost);
+				header += "the " + animalType + " population per month:\n Population: " + animalCount + "\n";
 			}
+			//Else the cost of a single animal is calculated.
+			else{
+				animalCount = 1;
+				totalCost = ExpenseReport.calculateAnimalExpense(animalCount, foodCost, medicineCost);
+				header += "a single " + animalType + " per month:\n";
+			}
+			
+			//Message to display all the costs.
+			JOptionPane.showMessageDialog(null, header + "  Food cost per month: " + String.format("$%,.2f", (foodCost * animalCount)) + "\n" +
+						"  Medicine cost per month: " + String.format("$%,.2f", (medicineCost * animalCount)) + "\n" + "  Total: " + 
+						String.format("$%,.2f", totalCost) + "\n", TITLE, JOptionPane.INFORMATION_MESSAGE);
 		}
-		
-		//If to calculate the cost of all the animals of that type.
-		if(multiple){
-			animalCount = animalTypeCount(animals, animalChoice);
-			totalCost = ExpenseReport.calculateAnimalExpense(animalCount, foodCost, medicineCost);
-			header += "the " + animalType + " population per month:\n Population: " + animalCount + "\n";
-		}
-		//Else the cost of a single animal is calculated.
-		else{
-			animalCount = 1;
-			totalCost = ExpenseReport.calculateAnimalExpense(animalCount, foodCost, medicineCost);
-			header += "a single " + animalType + " per month:\n";
-		}
-		
-		//Message to display all the costs.
-		JOptionPane.showMessageDialog(null, header + "  Food cost per month: " + String.format("$%,.2f", (foodCost * animalCount)) + "\n" +
-					"  Medicine cost per month: " + String.format("$%,.2f", (medicineCost * animalCount)) + "\n" + "  Total: " + 
-					String.format("$%,.2f", totalCost) + "\n", TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	/**
@@ -928,7 +976,7 @@ public class AnimalShelterManager {
 		//Variables to display the various messages to the user.
 		final String TITLE = "Animal Shelter Employee Menu";
 		final String PROMPT = "Select the type of animal:\n";
-		final String[] OPTIONS = {"  1) Dog\n", "  2) Cat\n", "  3) Small Rodent\n", "  4) Bird\n"};
+		final String[] OPTIONS = {"  1) Dog\n", "  2) Cat\n", "  3) Small Rodent\n", "  4) Bird\n", "  5) Exit"};
 		final String ERROR_NFE = "Please enter a number to select an option.";
 		final String ERROR_MENU = "Please select an option from the menu.";
 		//Variable to store the user choice.
@@ -941,8 +989,8 @@ public class AnimalShelterManager {
 			try{
 				//Animal menu is displayed.
 				choice = Integer.parseInt(JOptionPane.showInputDialog(null, PROMPT + OPTIONS[0] + OPTIONS[1] + OPTIONS[2]
-						+ OPTIONS[3], TITLE, JOptionPane.QUESTION_MESSAGE));
-				if(choice <= 0 || choice > 4){
+						+ OPTIONS[3] + OPTIONS[4], TITLE, JOptionPane.QUESTION_MESSAGE));
+				if(choice <= 0 || choice > 5){
 					//If the user enters an option outside the menu options this error is displayed.
 					JOptionPane.showMessageDialog(null, ERROR_MENU, TITLE, JOptionPane.ERROR_MESSAGE);
 					validChoice = false;
@@ -973,7 +1021,8 @@ public class AnimalShelterManager {
 		final String PROMPT = "Select an item:\n";
 		final String[] PRODUCTS = {"Food", "Medicine", "Food Bowls", "Leashes", "Collars", "Toys"};
 		final String[] OPTIONS = {"  1) " + PRODUCTS[0] +"\n", "  2) " + PRODUCTS[1] +"\n", "  3) " + PRODUCTS[2] +"\n",
-				"  4) " + PRODUCTS[3] + "\n", "  5) " + PRODUCTS[4] + "\n", "  6) " + PRODUCTS[5] + "\n"};
+				"  4) " + PRODUCTS[3] + "\n", "  5) " + PRODUCTS[4] + "\n", "  6) " + PRODUCTS[5] + "\n"
+				+ "  7) Exit"};
 		final String ERROR_NFE = "Please enter a number to select an option.";
 		final String ERROR_MENU = "Please select an option from the menu.";
 		//Variable to store the user choice.
@@ -988,14 +1037,27 @@ public class AnimalShelterManager {
 				//Inventory menu is displayed.
 				choice = Integer.parseInt(JOptionPane.showInputDialog(null, PROMPT + OPTIONS[0] + OPTIONS[1] + OPTIONS[2]
 						+ OPTIONS[3] + OPTIONS[4] + OPTIONS[5], TITLE, JOptionPane.QUESTION_MESSAGE));
-				if(choice <= 0 || choice > 6){
+				if(choice <= 0 || choice > 7){
 					//If the user enters an option outside the menu options this error is displayed.
 					JOptionPane.showMessageDialog(null, ERROR_MENU, TITLE, JOptionPane.ERROR_MESSAGE);
 					validChoice = false;
 				}else{
+					//If the user selects the Exit option a sentinel value is set and we break from the loop.
+					if(choice == 7){
+						choice = -100;
+						validChoice = true;
+						break;
+					}
 					//If the user enters 1 or 2 then the animal menu has to be called.
 					if(choice == 1 || choice == 2){
-						item = Animal.getAnimalTypes(animalMenu()) + " " + PRODUCTS[choice - 1];
+						int animalChoice = animalMenu();
+						if(animalChoice != 4){
+							item = Animal.getAnimalTypes(animalChoice) + " " + PRODUCTS[choice - 1];
+						}
+						else{
+							choice = -100;
+							break;
+						}
 					}else{
 						//Any other option is does not need to call other methods, so the name is stored.
 						item = PRODUCTS[choice - 1];
@@ -1016,7 +1078,7 @@ public class AnimalShelterManager {
 			}
 			
 		}while(!validChoice);
-		//Returns the position in the items list so the inforamtion for that item can be used.
+		//Returns the position in the items list so the information for that item can be used.
 		return choice;
 	}
 	
@@ -1180,12 +1242,14 @@ public class AnimalShelterManager {
 				
 				//Finds the first semicolon and cuts the unnecessary parts to only have the first name.
 				divPosition = line.indexOf(';') + lastInfoDiv;
-				temp.setAnimalID((line.substring(lastInfoDiv, divPosition).trim()));
-				lastInfoDiv = line.indexOf(';') + 1;
+				if(divPosition != -1){
+					temp.setAnimalID((line.substring(lastInfoDiv, divPosition).trim()));
+					lastInfoDiv = line.indexOf(';') + 1;
 
-				//Finds the next semicolon and cuts the unnecessary parts to only have the last name.
-				temp.setAnimalType((line.substring(lastInfoDiv).trim()));
-				animals.add(temp);
+					//Finds the next semicolon and cuts the unnecessary parts to only have the last name.
+					temp.setAnimalType((line.substring(lastInfoDiv).trim()));
+					animals.add(temp);
+				}
 			}
 			//After reading the file close the Scanner object.
 			reader.close();
