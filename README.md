@@ -11,12 +11,12 @@ FirstName LastName ; Info1 ; Info2 ; Info3 ; Info4
 
 Changes that need/should be done:
 
-* No digits allowed for name input.
+* No digits allowed for name input. (DONE)
 
-* Display customer information when the telephone number matches an existing customer.
+* Display customer information when the telephone number matches an existing customer. (DONE)
 
-* Add returns to the menus that do not currently have returns.
+* Add returns to the menus that do not currently have returns. (DONE)
 
-* Notify the manager/employee when inventory for an item is below 10.
+* Notify the manager/employee when inventory for an item is below 10. (DONE)
 
-* Add the month number when prompting for the expected inventory sales.
+* Add the month number when prompting for the expected inventory sales. (DONE)
