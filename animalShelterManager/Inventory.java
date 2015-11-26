@@ -21,6 +21,8 @@ public class Inventory {
 	private static final int MAX_INVENTORY = 300;
 	//Variable to store the max number of items the shelter sells.
 	private static final int MAX_ITEMS = 12;
+	//Variable to store the count that it considered too low. 
+	private static final int LOW_ALERT = 10;
 	//Variable to store the max number of each type of item.
 	private static final int MAX_ITEM_TYPES = 25;
 	//Variable to keep track of the number of items available in the animal shelter.
@@ -113,6 +115,14 @@ public class Inventory {
 	 */
 	public static int getInventoryCount(){
 		return inventoryCount;
+	}
+	
+	/**
+	 * Accessor method to return the trigger for low count.
+	 * @return
+	 */
+	public static int getLowAlert(){
+		return LOW_ALERT;
 	}
 	
 	/**
