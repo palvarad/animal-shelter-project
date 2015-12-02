@@ -2,9 +2,9 @@
  * Group: MachineWork
  * Group Members: Larry Hong (G00714737) and Peter Alvarado Nunez (G00884723).
  * Group Leader: Larry Hong
- * Date: 11-11-2015
+ * Date: 12-08-2015
  * Course: IT 306 - 001
- * Project Phase V - Preliminary System Implementation
+ * Project Phase VI - Final System Implementation
  */
 package animalShelterManager;
 
@@ -171,7 +171,14 @@ public class ExpenseReport {
 		double restockCost = 0;
 		int itemsSold = 0;
 		int itemsToPurchase = 0;
-		
+		//If the user enters a number greater than 100 than this exception is thrown.
+		if(percentToSell > 100){
+			throw new IllegalArgumentException("The percent to sell cannot exceed 100.");
+		}
+		//If the user enters a number less than 0 than this exception is thrown.
+		else if(percentToSell < 0){
+			throw new IllegalArgumentException("The percent to sell cannot be below 0");
+		}
 		itemsSold = (int)(Inventory.getMaxInventory() * (percentToSell/100));
 		itemsToPurchase = Inventory.getMaxInventory() - itemsSold;
 		restockCost = itemsToPurchase * averageOfInventory;

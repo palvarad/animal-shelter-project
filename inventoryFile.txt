@@ -1,6 +1,6 @@
 Dog Food ; 20.0 ; 35.0 ; 14
 Dog Medicine ; 15.0 ; 25.0 ; 15
-Cat Food ; 15.0 ; 25.0 ; 15
+Cat Food ; 15.0 ; 25.0 ; 14
 Cat Medicine ; 10.0 ; 20.0 ; 15
 Rodent Food ; 12.0 ; 20.0 ; 15
 Rodent Medicine ; 8.0 ; 15.0 ; 15
@@ -8,5 +8,5 @@ Bird Food ; 10.0 ; 20.0 ; 15
 Bird Medicine ; 8.0 ; 15.0 ; 15
 Food Bowls ; 2.0 ; 5.0 ; 12
 Leashes ; 1.0 ; 2.0 ; 15
-Collars ; 5.0 ; 8.0 ; 15
+Collars ; 5.0 ; 8.0 ; 25
 Toys ; 10.0 ; 15.0 ; 13

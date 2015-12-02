@@ -2,9 +2,9 @@
  * Group: MachineWork
  * Group Members: Larry Hong (G00714737) and Peter Alvarado Nunez (G00884723).
  * Group Leader: Larry Hong
- * Date: 11-11-2015
+ * Date: 12-08-2015
  * Course: IT 306 - 001
- * Project Phase V - Preliminary System Implementation
+ * Project Phase VI - Final System Implementation
  */
 package animalShelterManager;
 

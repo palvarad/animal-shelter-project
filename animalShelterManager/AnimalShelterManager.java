@@ -2,9 +2,9 @@
  * Group: MachineWork
  * Group Members: Larry Hong (G00714737) and Peter Alvarado Nunez (G00884723).
  * Group Leader: Larry Hong
- * Date: 11-11-2015
+ * Date: 12-08-2015
  * Course: IT 306 - 001
- * Project Phase V - Preliminary System Implementation
+ * Project Phase VI - Final System Implementation
  */
 package animalShelterManager;
 
@@ -35,7 +35,7 @@ public class AnimalShelterManager {
 		//ExpenseReport object to store all the transactions done in the current session.
 		ExpenseReport currentExpenses = new ExpenseReport("Current Report", 0, 0);
 		
-		//Method call that reads the file. The array, file path, and an integer to represent type are passed.
+		//Method call that reads the files. The List, file path, and an integer to represent type are passed.
 		readPersonFile(shelterManager, Manager.fileLocation(), 0);
 		readPersonFile(shelterEmployees, Employee.fileLocation(), 1);
 		readPersonFile(shelterCustomers, Customer.fileLocation(), 2);
@@ -68,8 +68,11 @@ public class AnimalShelterManager {
 				JOptionPane.showMessageDialog(null, "Only the manager can terminate the system", TITLE, JOptionPane.ERROR_MESSAGE);
 			}
 			//After the manager or the employee return to the login screen then all the changes are saved to the file.
+			//Also, before the manager shuts down the system the files are updated. 
 			writeInventoryToFile(shelterInventory);
 			writeAnimalToFile(shelterAnimals);
+			writeShelterPersonToFile(shelterCustomers);
+			writeShelterPersonToFile(shelterEmployees);
 		}while(terminate != -1);
 		//If the manager decides to exit the system then this message is displayed and the program is terminated.
 		JOptionPane.showMessageDialog(null, "System Successfully Shutdown", TITLE, JOptionPane.INFORMATION_MESSAGE);
@@ -305,8 +308,6 @@ public class AnimalShelterManager {
 			}catch(NumberFormatException e){
 				JOptionPane.showMessageDialog(null, ERROR_NFE, TITLE, JOptionPane.ERROR_MESSAGE);
 			}
-			//After all the changes have been made the information is written to the employee file.
-			writeShelterPersonToFile(employees);
 		}while(choice != 4);
 	}
 	
@@ -475,8 +476,7 @@ public class AnimalShelterManager {
 					createNewCustomer(customers);
 					adoptAnimal((Customer)customers.get(customers.size()-1), animals, items, current);
 				}
-				//After the adoption is complete then the customer file is updated.
-				writeShelterPersonToFile(customers);
+				
 				}catch(IllegalArgumentException e){
 					JOptionPane.showMessageDialog(null, e.getMessage(), TITLE, JOptionPane.ERROR_MESSAGE);
 					valid = false;
@@ -676,6 +676,7 @@ public class AnimalShelterManager {
 		final String FNAME_PROMPT = "Enter the new employee's first name:";
 		final String LNAME_PROMPT = "Enter the new employee's last name:";
 		final String ID_PROMPT = "Enter the ID of the new employee:";
+		PrintWriter writer = null;
 		//Variables to store the current employee count and the number of employees to increment by.
 		final int INCREASE_COUNT = 1, EMPLOYEE_COUNT = Employee.getEmployeeCount();
 		//Variable to control the loop that prompts the manager for the employee information.
@@ -728,6 +729,19 @@ public class AnimalShelterManager {
 				valid = false;
 			}
 		}while(!valid);
+		//After the customer information is validated and added it is appended to the file.
+		try{
+			//Writer to write to the file.
+			writer = new PrintWriter(new FileOutputStream(Employee.fileLocation(), true));
+			//Writes only the last entry, because it is the only one that needs to be changed.
+			writer.println(employees.get(employees.size()-1).toFile());
+			//Closes writer.
+			writer.close();
+		}
+		//Catch if the file was not found.
+		catch(FileNotFoundException e){
+			JOptionPane.showMessageDialog(null, "The file was not found.", TITLE, JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	/**
@@ -860,24 +874,26 @@ public class AnimalShelterManager {
 						//First prompt to ask for the expected number of animals at the shelter.
 						if(promptLevel == 0){
 							expectedAnimals = Integer.parseInt(JOptionPane.showInputDialog(null, ANIMAL_PROMPT, TITLE, JOptionPane.QUESTION_MESSAGE));
-							if(expectedAnimals < 0 || expectedAnimals <= MAX_YEARLY_ANIMALS){
+							if(expectedAnimals > 0 && expectedAnimals <= MAX_YEARLY_ANIMALS){
 								averageAnimalExpense = (averageAnimalExpense * expectedAnimals);
 								promptLevel = 1;
 							//Error if the number of animals is greater than the max allowed.
 							}else{
 								JOptionPane.showMessageDialog(null, "The number of expected animals must be positive and less than " +  MAX_YEARLY_ANIMALS,
 											TITLE, JOptionPane.ERROR_MESSAGE);
+								valid = false;
 							}
 						}
 						//Prompt the user for the expected number of animals to be adopted during the year.
 						if(promptLevel == 1){
 							expectedAdoptions = Integer.parseInt(JOptionPane.showInputDialog(null, ANIMAL_PROMPT2, TITLE, JOptionPane.QUESTION_MESSAGE));
-							if(expectedAnimals < 0 || expectedAnimals <= MAX_YEARLY_ANIMALS){
+							if(expectedAdoptions > 0 && expectedAdoptions <= expectedAnimals){
 								averageAnimalProfit = (averageAnimalProfit * expectedAdoptions);
 								promptLevel = 2;
 							}else{
-								JOptionPane.showMessageDialog(null, "The number of expected adoptions must be positive and less than " +  MAX_YEARLY_ANIMALS,
+								JOptionPane.showMessageDialog(null, "The number of expected adoptions must be positive and less than " +  expectedAnimals,
 											TITLE, JOptionPane.ERROR_MESSAGE);
+								valid = false;
 							}
 						}
 						
@@ -896,6 +912,10 @@ public class AnimalShelterManager {
 					}catch(NumberFormatException e){
 						//Error to display if the user enters a non-numeric value this error is displayed.
 						JOptionPane.showMessageDialog(null, ERROR_NFE, TITLE, JOptionPane.ERROR_MESSAGE);
+						valid = false;
+					}
+					catch(IllegalArgumentException e){
+						JOptionPane.showMessageDialog(null, e.getMessage(), TITLE, JOptionPane.ERROR_MESSAGE);
 						valid = false;
 					}
 				}while(!valid);
@@ -1131,7 +1151,14 @@ public class AnimalShelterManager {
 				//If the object is of manager type the password has to be read.
 				if(persons.get(personIndex) instanceof Manager){
 					divPosition = line.indexOf(';', lastInfoDiv);
-					((Manager)persons.get(personIndex)).setPassword(line.substring(divPosition + 1).trim());
+					try{
+						((Manager)persons.get(personIndex)).setPassword(line.substring(divPosition + 1).trim());
+					}
+					catch(IllegalArgumentException e){
+						JOptionPane.showMessageDialog(null, "No manager password set.\nPlease edit the managerFile and add a password.",
+								TITLE, JOptionPane.ERROR_MESSAGE);
+					}
+					
 				}
 				//If the object is of employee type the id has to be read.
 				else if(persons.get(personIndex)instanceof Employee){
