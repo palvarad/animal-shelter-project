@@ -67,8 +67,8 @@ public class AnimalShelterManager {
 			else if(choice == -1){
 				JOptionPane.showMessageDialog(null, "Only the manager can terminate the system", TITLE, JOptionPane.ERROR_MESSAGE);
 			}
-			//After the manager or the employee return to the login screen then all the changes are saved to the file.
-			//Also, before the manager shuts down the system the files are updated. 
+			//After the manager or employee return to the user selection screen the information is saved.
+			//Also, when the program is terminated.
 			writeInventoryToFile(shelterInventory);
 			writeAnimalToFile(shelterAnimals);
 			writeShelterPersonToFile(shelterCustomers);
@@ -199,67 +199,76 @@ public class AnimalShelterManager {
 			quantityPrompt = "Enter the number of " + items.get(item).getItemName() + " to purchase:";
 			itemNames[purchaseCount] = items.get(item).getItemName();
 			
-			//Try and catch to prevent the user from entering non-numeric values and to catch other exceptions.
-			try{
+			//Error to be displayed if no more of the item need to be purchased
+			if(items.get(item).getItemCount() == Inventory.getMaxItemTypesCount() && manager){
+				JOptionPane.showMessageDialog(null, "The stock of " + items.get(item).getItemName() +" is full.",
+							TITLE, JOptionPane.INFORMATION_MESSAGE);
+			}
+			//Error to be displayed if there no more of that particular item available for purchase.
+			else if(items.get(item).getItemCount() == 0 && !manager){
+				JOptionPane.showMessageDialog(null, "The stock of " + items.get(item).getItemName() +" is empty.",
+						TITLE, JOptionPane.INFORMATION_MESSAGE);
+			}
+			else{
 				do{
-					itemQuan[purchaseCount] = Integer.parseInt(JOptionPane.showInputDialog(null, quantityPrompt, TITLE, JOptionPane.QUESTION_MESSAGE));
-					countPrompt = true;
+					//Try and catch to prevent the user from entering non-numeric values and to catch other exceptions.
+					try{
+						itemQuan[purchaseCount] = Integer.parseInt(JOptionPane.showInputDialog(null, quantityPrompt, TITLE, JOptionPane.QUESTION_MESSAGE));
+						if(manager){
+							itemPrices[purchaseCount] = items.get(item).inventoryPurchase((itemQuan[purchaseCount]));
+							countPrompt = true;
+						}
+						else if(!manager){
+							itemPrices[purchaseCount] = items.get(item).inventorySell(itemQuan[purchaseCount]);
+							countPrompt = true;
+						}
+					}catch(NumberFormatException e){
+						JOptionPane.showMessageDialog(null, "The quantity must a whole number.", TITLE, JOptionPane.ERROR_MESSAGE);
+						countPrompt = false;	
+					}catch(IllegalArgumentException e){
+						JOptionPane.showMessageDialog(null, e.getMessage(), TITLE, JOptionPane.ERROR_MESSAGE);
+						countPrompt = false;
+					}
 				}while(!countPrompt);
-				
-				if(manager){
-					itemPrices[purchaseCount] = items.get(item).inventoryPurchase((itemQuan[purchaseCount]));
-				}
-				else if(!manager){
-					itemPrices[purchaseCount] = items.get(item).inventorySell(itemQuan[purchaseCount]);
-				}
-				
+					
 				//Purchase count is incremented in case the user wants to purchase one more item. 
 				purchaseCount++;
-				header = "Receipt Preview:\n";
-				
-				//Loop to create a receipt for the user by putting all the relevant information inside a string.
-				for(int x = 0; x < purchaseCount; x++){
-					receipt += "  Item " + (x + 1) + ": " + itemNames[x] + " || Qty: " + itemQuan[x] 
-							+ " || Cost: " + String.format("$%,.2f", itemPrices[x]) + "\n";
-					total += itemPrices[x];
-				}
-				//Message to display the receipt along the total.
-				JOptionPane.showMessageDialog(null, header + receipt + "  Total: " + String.format("$%,.2f", total));
+				//Message to be displayed if the inventory is below 10.
 				if(items.get(item).getItemCount() <= Inventory.getLowAlert()){
 					JOptionPane.showMessageDialog(null, "The number of " + items.get(item).getItemName() + " is less than "
 								+ Inventory.getLowAlert() + "\n In Stock: " + items.get(item).getItemCount()
 								, TITLE, JOptionPane.INFORMATION_MESSAGE);
 				}
-			}catch(NumberFormatException e){
-				JOptionPane.showMessageDialog(null, "The quantity must a numeric value.", TITLE, JOptionPane.ERROR_MESSAGE);
-				countPrompt = false;
-				
-			}catch(IllegalArgumentException e){
-				JOptionPane.showMessageDialog(null, e.getMessage(), TITLE, JOptionPane.ERROR_MESSAGE);
 			}
-			if(countPrompt){
-				//Prompt to know if the user would like to purchase more items.
-				buyMore = JOptionPane.showConfirmDialog(null, morePurchasesPrompt, TITLE, JOptionPane.YES_NO_OPTION);
-				//If the user wants to purchase more items the receipt and total are reset and will be calculated
-				//again during the execution of the for loop.
-				if(buyMore == JOptionPane.YES_OPTION){
-					receipt = "";
-					total = 0;
-				}
+			header = "Receipt Preview:\n";
+			
+			//Loop to create a receipt for the user by putting all the relevant information inside a string.
+			for(int x = 0; x < purchaseCount; x++){
+				receipt += "  Item " + (x + 1) + ": " + itemNames[x] + " || Qty: " + itemQuan[x] 
+						+ " || Cost: " + String.format("$%,.2f", itemPrices[x]) + "\n";
+				total += itemPrices[x];
+			}
+			//Message to display the receipt along the total.
+			JOptionPane.showMessageDialog(null, header + receipt + "  Total: " + String.format("$%,.2f", total));
+			//Prompt to know if the user would like to purchase more items.
+			buyMore = JOptionPane.showConfirmDialog(null, morePurchasesPrompt, TITLE, JOptionPane.YES_NO_OPTION);
+			//If the user wants to purchase more items the receipt and total are reset and will be calculated
+			//again during the execution of the for loop.
+			if(buyMore == JOptionPane.YES_OPTION){
+				receipt = "";
+				total = 0;
 			}
 		}while(buyMore != JOptionPane.NO_OPTION);
 		
-		if(total != 0){
-			//When the user selects to not purchase anymore then the final receipt is displayed.
-			header = "Final Receipt:\n";
-			JOptionPane.showMessageDialog(null, header + receipt + "  Total: " + String.format("$%,.2f", total));
-			//Based on the menu that called this method the transaction is either an expense or a profit.
-			if(manager){
-				current.setMonthExpense(total);
-			}
-			else if(!manager){
-				current.setMonthProfit(total);
-			}
+		//When the user selects to not purchase anymore then the final receipt is displayed.
+		header = "Final Receipt:\n";
+		JOptionPane.showMessageDialog(null, header + receipt + "  Total: " + String.format("$%,.2f", total));
+		//Based on the menu that called this method the transaction is either an expense or a profit.
+		if(manager){
+			current.setMonthExpense(total);
+		}
+		else if(!manager){
+			current.setMonthProfit(total);
 		}
 	}
 	

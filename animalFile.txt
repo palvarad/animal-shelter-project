@@ -1,4 +1,3 @@
-R1011 ; Rodent
 B1012 ; Bird
 C1013 ; Cat
 B1014 ; Bird

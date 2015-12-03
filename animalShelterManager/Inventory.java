@@ -212,7 +212,10 @@ public class Inventory {
 	public double inventoryPurchase(int amountToPurchase){
 		double purchaseTotal = 0;
 		
-		if((Inventory.getInventoryCount() + amountToPurchase) > Inventory.getMaxInventory()){
+		if(amountToPurchase <= 0){
+			throw new IllegalArgumentException("Invalid number of items. The number of items to purchase must be positive.");
+		}
+		else if((Inventory.getInventoryCount() + amountToPurchase) > Inventory.getMaxInventory()){
 			throw new IllegalArgumentException("Invalid number of items. Buying that amount will exceed the inventory limit.\n"
 					+ "Inventory Count:" + Inventory.getInventoryCount() + " Max Inventory: " + Inventory.getMaxInventory());
 		}
@@ -240,7 +243,7 @@ public class Inventory {
 			throw new IllegalArgumentException("Invalid number of items. The number of items to purchase must be positive.");
 		}
 		else if(amountToSell > 10){
-			throw new IllegalArgumentException("Invalid number of items. Only 10 of each item can be purchased.");
+			throw new IllegalArgumentException("Invalid number of items. Only 10 of each item can be purchased at a time.");
 		}
 		else if((this.itemCount - amountToSell) < 0){
 			throw new IllegalArgumentException("Invalid number of items. There are not sufficient items of that item in inventory to complete the sell.\n"
