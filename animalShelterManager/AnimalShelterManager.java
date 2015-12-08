@@ -1195,6 +1195,13 @@ public class AnimalShelterManager {
 		//File not found exception to display an error message to the user.
 		}catch(FileNotFoundException e){
 			JOptionPane.showMessageDialog(null, "File was not found.", TITLE, JOptionPane.ERROR_MESSAGE);
+			//The manager file must be present before running the program. This prevents the program from running
+			//if that file is missing.
+			if(filePath.equals(Manager.fileLocation())){
+				JOptionPane.showMessageDialog(null, "The manager file (" + filePath + ") must be present.",
+						TITLE, JOptionPane.ERROR_MESSAGE);
+				System.exit(0);
+			}
 		}
 	}
 	
